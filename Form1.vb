@@ -64,6 +64,8 @@ Public Class Form1
         End Try
 
         PollInfo()
+
+        Timer1.Start()
     End Sub
     Private Sub PollInfo()
         'checks if device is powered on or not
@@ -75,6 +77,7 @@ Public Class Form1
 
 
         Dim tempvalue As String = SendCommands("?v", "VOL", ).ToString.Replace("VOL", "").TrimStart("0"c)
+        If tempvalue = "" Then tempvalue = 0
         Dim percent As Integer = (tempvalue / 185) * 100
         lblMVolume.Text = percent & "%"
         SliderMVolume.Value = tempvalue
@@ -157,6 +160,26 @@ Public Class Form1
         Return Nothing
     End Function
 
+    Private Sub ValidateVolume(volume As String)
+        'if value is less than 10 pre-fix 2 "0"s else if less than 100 pre-fix 1 "0" else just send the command without added "0"s
+        If volume <= 0 Then
+            volume = 0
+            SendCommands(volume & "VL", "VL")
+        ElseIf volume >= 185 Then
+            volume = 185
+            SendCommands(volume & "VL", "VL")
+        ElseIf volume = 0 Then
+            SendCommands("000VL", "VL")
+        ElseIf volume < 10 Then
+            SendCommands("00" & volume & "VL", "VL")
+        ElseIf volume < 100 Then
+            SendCommands("0" & volume & "VL", "VL")
+        Else
+            SendCommands(volume & "VL", "VL")
+
+        End If
+    End Sub
+
     Private Function CheckPwr(Optional ByVal pwron As Boolean = True, Optional ByVal pwroff As Boolean = False)
         'sends ?p command to check power status
         If SendCommands("?p", "PWR").ToString = "PWR0" Then
@@ -174,8 +197,6 @@ Public Class Form1
                 btnPwr.Text = "ON"
                 btnPwr.SideColor = CustomSideButton._Color.Green
                 lblPowerOff.Visible = False
-                Dim percent As Integer = (SendCommands("?v").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
-                lblMVolume.Text = percent & "%"
                 Return True
             End If
 
@@ -187,8 +208,6 @@ Public Class Form1
                 btnPwr.Text = "ON"
                 lblPowerOff.Visible = False
                 btnPwr.SideColor = CustomSideButton._Color.Green
-                Dim percent As Integer = (SendCommands("?v").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
-                lblMVolume.Text = percent & "%"
                 Return True
 
                 'if status is on and if parameter pwron is set to false then just sets GUI to represent this
@@ -218,22 +237,25 @@ Public Class Form1
     Private Sub btnPwr_Click(sender As Object, e As EventArgs) Handles btnPwr.Click
         'checks power status and since it has both parameters set to true also turns device off if on and on if off
         CheckPwr(True, True)
+        PollInfo()
     End Sub
 
     Private Sub btnMVolumeDown_Click(sender As Object, e As EventArgs) Handles btnMVolumeDown.Click
-        'sends 10 volume down commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim tempvalue As String = SendCommands("VD", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c)
-        Dim percent As Integer = (tempvalue / 185) * 100
+        Dim tempresult As String = SendCommands("?v", "VOL").ToString.Replace("VOL", "").TrimStart("0"c)
+        tempresult = tempresult - 10
+        ValidateVolume(tempresult)
+        Dim percent As Integer = (tempresult / 185) * 100
         lblMVolume.Text = percent & "%"
-        SliderMVolume.Value = tempvalue
+        SliderMVolume.Value = tempresult
     End Sub
 
     Private Sub btnMVolumeUp_Click(sender As Object, e As EventArgs) Handles btnMVolumeUp.Click
-        'sends 10 volume up commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim tempvalue As String = SendCommands("VU", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c)
-        Dim percent As Integer = (tempvalue / 185) * 100
+        Dim tempresult As String = SendCommands("?v", "VOL").ToString.Replace("VOL", "").TrimStart("0"c)
+        tempresult = tempresult + 10
+        ValidateVolume(tempresult)
+        Dim percent As Integer = (tempresult / 185) * 100
         lblMVolume.Text = percent & "%"
-        SliderMVolume.Value = tempvalue
+        SliderMVolume.Value = tempresult
     End Sub
 
     Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs) Handles NotifyIcon1.DoubleClick, ShowInterface.Click
@@ -242,6 +264,7 @@ Public Class Form1
         Me.WindowState = FormWindowState.Normal
         Me.Opacity = 1
         Me.ShowInTaskbar = True
+        Timer1.Start()
     End Sub
 
     Private Sub btnHide_Click(sender As Object, e As EventArgs) Handles btnHide.Click
@@ -275,21 +298,26 @@ Public Class Form1
             lblMVolume.Visible = True
         End If
     End Sub
-
-    Private Sub SliderMVolume_Scroll(sender As Object) Handles SliderMVolume.Scroll
-        
-    End Sub
     Private Sub SliderMVolume_MouseUp(sender As Object, e As MouseEventArgs) Handles SliderMVolume.MouseUp
         'Sets volume level to the value of the slider and create a percentage variable for use in the GUI
         Dim percent As Integer = (SliderMVolume.Value / 185) * 100
-        'if value is less than 10 pre-fix 2 "0"s else if less than 100 pre-fix 1 "0" else just send the command without added "0"s
-        If SliderMVolume.Value < 10 Then
-            SendCommands("00" & SliderMVolume.Value.ToString & "VL", "VL")
-        ElseIf SliderMVolume.Value < 100 Then
-            SendCommands("0" & SliderMVolume.Value.ToString & "VL", "VL")
-        Else
-            SendCommands(SliderMVolume.Value.ToString & "VL", "VL")
-        End If
+        ValidateVolume(SliderMVolume.Value)
         lblMVolume.Text = percent & "%"
+    End Sub
+
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        If Not Control.MousePosition.X > Me.Location.X And Control.MousePosition.X < Me.Location.X + Width And Control.MousePosition.Y > Location.Y And Control.MousePosition.Y < Location.Y + Height Then
+            For counter = 1.1 To 0.0 Step -0.1
+                Me.Opacity = counter
+                Me.Refresh()
+                Threading.Thread.Sleep(25)
+            Next counter
+            Timer1.Stop()
+        End If
+    End Sub
+
+    Private Sub SliderMVolume_Scroll(sender As Object) Handles SliderMVolume.Scroll
+
+
     End Sub
 End Class
