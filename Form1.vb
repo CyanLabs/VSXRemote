@@ -39,9 +39,9 @@ Public Class Form1
 
         'Sets Form to bottom right corner, Mkaes invisible and hides from taskbar
         Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
-        Me.Opacity = 0
-        Me.WindowState = FormWindowState.Minimized
-        Me.ShowInTaskbar = False
+        ' Me.Opacity = 0
+        ' Me.WindowState = FormWindowState.Minimized
+        ' Me.ShowInTaskbar = False
 
         'Gets IP Range from network adapter and adds to arguments.ipaddress
         hostIp = Dns.GetHostEntry(String.Empty).AddressList.[Single](Function(x) x.AddressFamily = AddressFamily.InterNetwork)
@@ -64,7 +64,6 @@ Public Class Form1
             MsgBox("No Pioneer AVR Detected, You will be able to manually config the application in a future release")
             Application.Exit()
         End Try
-
         'checks if device is powered on or not
         CheckPwr(False, False)
 
@@ -102,7 +101,7 @@ Public Class Form1
         End Try
     End Function
 
-    Private Function SendCommands(ByVal cmd As String, Optional ByVal amount As Integer = 1, Optional ByVal expectedresult As String = "")
+    Private Function SendCommands(ByVal cmd As String, Optional ByVal expectedresult As String = "", Optional ByVal amount As Integer = 1)
         'Checks if connected if not connects
         If ConnectToVSX(serverIp, "8102") = True Then
             Dim output As String = ""
@@ -149,11 +148,11 @@ Public Class Form1
 
     Private Function CheckPwr(Optional ByVal pwron As Boolean = True, Optional ByVal pwroff As Boolean = False)
         'sends ?p command to check power status
-        If SendCommands("?p", True).ToString = "PWR0" Then
+        If SendCommands("?p", "PWR").ToString = "PWR0" Then
 
             'if status is on and if parameter pwroff is set to true then turns system off and sets GUI to represent this
             If pwroff = True Then
-                SendCommands("PF", True)
+                SendCommands("PF")
                 btnPwr.Text = "OFF"
                 btnPwr.SideColor = CustomSideButton._Color.Red
                 lblPowerOff.Visible = True
@@ -164,7 +163,7 @@ Public Class Form1
                 btnPwr.Text = "ON"
                 btnPwr.SideColor = CustomSideButton._Color.Green
                 lblPowerOff.Visible = False
-                Dim percent As Integer = (SendCommands("?v", True, False).ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
+                Dim percent As Integer = (SendCommands("?v").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
                 lblMVolume.Text = "VOLUME " & percent & "%"
                 Return True
             End If
@@ -173,11 +172,11 @@ Public Class Form1
 
             'if status is off and if parameter pwron is set to true then turns system on and sets GUI to represent this
             If pwron = True Then
-                SendCommands("PO", True)
+                SendCommands("PO")
                 btnPwr.Text = "ON"
                 lblPowerOff.Visible = False
                 btnPwr.SideColor = CustomSideButton._Color.Green
-                Dim percent As Integer = (SendCommands("?v", True, False).ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
+                Dim percent As Integer = (SendCommands("?v").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
                 lblMVolume.Text = "VOLUME " & percent & "%"
                 Return True
 
@@ -193,7 +192,7 @@ Public Class Form1
 
     Private Function CheckMute()
         'sends ?m command to check mute status
-        If SendCommands("?m", True).ToString = "MUT0" Then
+        If SendCommands("?m", "MUT").ToString = "MUT0" Then
             Return True
         Else
             Return False
@@ -213,13 +212,13 @@ Public Class Form1
 
     Private Sub btnMVolumeDown_Click(sender As Object, e As EventArgs) Handles btnMVolumeDown.Click
         'sends 10 volume down commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim percent As Integer = (SendCommands("VD", 10, "VOL").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
+        Dim percent As Integer = (SendCommands("VD", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
         lblMVolume.Text = "VOLUME " & percent & "%"
     End Sub
 
     Private Sub btnMVolumeUp_Click(sender As Object, e As EventArgs) Handles btnMVolumeUp.Click
         'sends 10 volume up commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim percent As Integer = (SendCommands("VU", 10, "VOL").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
+        Dim percent As Integer = (SendCommands("VU", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
         lblMVolume.Text = "VOLUME " & percent & "%"
     End Sub
 
@@ -248,7 +247,7 @@ Public Class Form1
 
     Private Sub btnMute_Click(sender As Object, e As EventArgs) Handles btnMute.Click
         'Sends MZ to toggle mute status then gets new mute status and sets GUI accordingly
-        SendCommands("MZ", True)
+        SendCommands("MZ")
         If CheckMute() Then
             btnMute.Text = "UN-MUTE"
             btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.Muted
@@ -260,5 +259,17 @@ Public Class Form1
             lblMuted.Visible = False
             lblMVolume.Visible = True
         End If
+    End Sub
+
+    Private Sub SliderMVolume_Scroll(sender As Object) Handles SliderMVolume.Scroll
+        Dim percent As Integer = (SliderMVolume.Value / 185) * 100
+        If SliderMVolume.Value < 10 Then
+            SendCommands("00" & SliderMVolume.Value.ToString & "VL", "VL")
+        ElseIf SliderMVolume.Value < 100 Then
+            SendCommands("0" & SliderMVolume.Value.ToString & "VL", "VL")
+        Else
+            SendCommands(SliderMVolume.Value.ToString & "VL", "VL")
+        End If
+        lblMVolume.Text = "VOLUME " & percent & "%"
     End Sub
 End Class

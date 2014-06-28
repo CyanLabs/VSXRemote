@@ -3,6 +3,8 @@ Imports System.Drawing, System.Drawing.Drawing2D
 Imports System.ComponentModel, System.Windows.Forms
 Imports System.Runtime.InteropServices
 Imports System.Drawing.Imaging
+Imports System.Drawing.Text
+Imports System.Text
 
 '------------------
 'Creator: aeonhack
@@ -2037,6 +2039,1529 @@ Class PrecisionTimer
     Public Sub Dispose() Implements IDisposable.Dispose
         Delete()
     End Sub
+End Class
+
+'IMPORTANT:
+'Please leave these comments in place as they help protect intellectual rights and allow
+'developers to determine the version of the theme they are using. The preffered method
+'of distributing this theme is through the Nimoru Software home page at nimoru.com.
+
+'Name: Net Seal Theme
+'Created: 4/15/2013
+'Version: 1.0.0.0 beta
+'Site: http://nimoru.com/
+
+'This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+'To view a copy of this license, please visit http://creativecommons.org/licenses/by/3.0/
+
+'Copyright © 2013 Nimoru Software
+
+Module ThemeModule
+
+    Friend G As Graphics
+
+    Sub New()
+        TextBitmap = New Bitmap(1, 1)
+        TextGraphics = Graphics.FromImage(TextBitmap)
+    End Sub
+
+    Private TextBitmap As Bitmap
+    Private TextGraphics As Graphics
+
+    Friend Function MeasureString(text As String, font As Font) As SizeF
+        Return TextGraphics.MeasureString(text, font)
+    End Function
+
+    Friend Function MeasureString(text As String, font As Font, width As Integer) As SizeF
+        Return TextGraphics.MeasureString(text, font, width, StringFormat.GenericTypographic)
+    End Function
+
+    Private CreateRoundPath As GraphicsPath
+    Private CreateRoundRectangle As Rectangle
+
+    Friend Function CreateRound(ByVal x As Integer, ByVal y As Integer, ByVal width As Integer, ByVal height As Integer, ByVal slope As Integer) As GraphicsPath
+        CreateRoundRectangle = New Rectangle(x, y, width, height)
+        Return CreateRound(CreateRoundRectangle, slope)
+    End Function
+
+    Friend Function CreateRound(ByVal r As Rectangle, ByVal slope As Integer) As GraphicsPath
+        CreateRoundPath = New GraphicsPath(FillMode.Winding)
+        CreateRoundPath.AddArc(r.X, r.Y, slope, slope, 180.0F, 90.0F)
+        CreateRoundPath.AddArc(r.Right - slope, r.Y, slope, slope, 270.0F, 90.0F)
+        CreateRoundPath.AddArc(r.Right - slope, r.Bottom - slope, slope, slope, 0.0F, 90.0F)
+        CreateRoundPath.AddArc(r.X, r.Bottom - slope, slope, slope, 90.0F, 90.0F)
+        CreateRoundPath.CloseFigure()
+        Return CreateRoundPath
+    End Function
+
+End Module
+
+Class NSSeperator
+    Inherits Control
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        Height = 10
+
+        P1 = New Pen(Color.FromArgb(35, 35, 35))
+        P2 = New Pen(Color.FromArgb(55, 55, 55))
+    End Sub
+
+    Private P1, P2 As Pen
+
+    Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
+        G = e.Graphics
+        G.Clear(BackColor)
+
+        G.DrawLine(P1, 0, 5, Width, 5)
+        G.DrawLine(P2, 0, 6, Width, 6)
+    End Sub
+
+End Class
+Class NSButton
+    Inherits Control
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        P1 = New Pen(Color.FromArgb(35, 35, 35))
+        P2 = New Pen(Color.FromArgb(65, 65, 65))
+    End Sub
+
+    Private IsMouseDown As Boolean
+
+    Private GP1, GP2 As GraphicsPath
+
+    Private SZ1 As SizeF
+    Private PT1 As PointF
+
+    Private P1, P2 As Pen
+
+    Private PB1 As PathGradientBrush
+    Private GB1 As LinearGradientBrush
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 0, Width - 1, Height - 1, 7)
+        GP2 = CreateRound(1, 1, Width - 3, Height - 3, 7)
+
+        If IsMouseDown Then
+            PB1 = New PathGradientBrush(GP1)
+            PB1.CenterColor = Color.FromArgb(60, 60, 60)
+            PB1.SurroundColors = {Color.FromArgb(55, 55, 55)}
+            PB1.FocusScales = New PointF(0.8F, 0.5F)
+
+            G.FillPath(PB1, GP1)
+        Else
+            GB1 = New LinearGradientBrush(ClientRectangle, Color.FromArgb(60, 60, 60), Color.FromArgb(55, 55, 55), 90.0F)
+            G.FillPath(GB1, GP1)
+        End If
+
+        G.DrawPath(P1, GP1)
+        G.DrawPath(P2, GP2)
+
+        SZ1 = G.MeasureString(Text, Font)
+        PT1 = New PointF(5, Height \ 2 - SZ1.Height / 2)
+
+        If IsMouseDown Then
+            PT1.X += 1.0F
+            PT1.Y += 1.0F
+        End If
+
+        G.DrawString(Text, Font, Brushes.Black, PT1.X + 1, PT1.Y + 1)
+
+        G.DrawString(Text, Font, Brushes.White, PT1)
+    End Sub
+
+    Protected Overrides Sub OnMouseDown(e As MouseEventArgs)
+        IsMouseDown = True
+        Invalidate()
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(e As MouseEventArgs)
+        IsMouseDown = False
+        Invalidate()
+    End Sub
+
+End Class
+
+Class NSProgressBar
+    Inherits Control
+
+    Private _Minimum As Integer
+    Property Minimum() As Integer
+        Get
+            Return _Minimum
+        End Get
+        Set(ByVal value As Integer)
+            If value < 0 Then
+                Throw New Exception("Property value is not valid.")
+            End If
+
+            _Minimum = value
+            If value > _Value Then _Value = value
+            If value > _Maximum Then _Maximum = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _Maximum As Integer = 100
+    Property Maximum() As Integer
+        Get
+            Return _Maximum
+        End Get
+        Set(ByVal value As Integer)
+            If value < 0 Then
+                Throw New Exception("Property value is not valid.")
+            End If
+
+            _Maximum = value
+            If value < _Value Then _Value = value
+            If value < _Minimum Then _Minimum = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _Value As Integer
+    Property Value() As Integer
+        Get
+            Return _Value
+        End Get
+        Set(ByVal value As Integer)
+            If value > _Maximum OrElse value < _Minimum Then
+                Throw New Exception("Property value is not valid.")
+            End If
+
+            _Value = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private Sub Increment(ByVal amount As Integer)
+        Value += amount
+    End Sub
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        P1 = New Pen(Color.FromArgb(35, 35, 35))
+        P2 = New Pen(Color.FromArgb(55, 55, 55))
+        B1 = New SolidBrush(Color.FromArgb(200, 160, 0))
+    End Sub
+
+    Private GP1, GP2, GP3 As GraphicsPath
+
+    Private R1, R2 As Rectangle
+
+    Private P1, P2 As Pen
+    Private B1 As SolidBrush
+    Private GB1, GB2 As LinearGradientBrush
+
+    Private I1 As Integer
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 0, Width - 1, Height - 1, 7)
+        GP2 = CreateRound(1, 1, Width - 3, Height - 3, 7)
+
+        R1 = New Rectangle(0, 2, Width - 1, Height - 1)
+        GB1 = New LinearGradientBrush(R1, Color.FromArgb(45, 45, 45), Color.FromArgb(50, 50, 50), 90.0F)
+
+        G.SetClip(GP1)
+        G.FillRectangle(GB1, R1)
+
+        I1 = CInt((_Value - _Minimum) / (_Maximum - _Minimum) * (Width - 3))
+
+        If I1 > 1 Then
+            GP3 = CreateRound(1, 1, I1, Height - 3, 7)
+
+            R2 = New Rectangle(1, 1, I1, Height - 3)
+            GB2 = New LinearGradientBrush(R2, Color.FromArgb(205, 150, 0), Color.FromArgb(150, 110, 0), 90.0F)
+
+            G.FillPath(GB2, GP3)
+            G.DrawPath(P1, GP3)
+
+            G.SetClip(GP3)
+            G.SmoothingMode = SmoothingMode.None
+
+            G.FillRectangle(B1, R2.X, R2.Y + 1, R2.Width, R2.Height \ 2)
+
+            G.SmoothingMode = SmoothingMode.AntiAlias
+            G.ResetClip()
+        End If
+
+        G.DrawPath(P2, GP1)
+        G.DrawPath(P1, GP2)
+    End Sub
+
+End Class
+
+Class NSLabel
+    Inherits Control
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        Font = New Font("Segoe UI", 11.25F, FontStyle.Bold)
+
+        B1 = New SolidBrush(Color.FromArgb(205, 150, 0))
+    End Sub
+
+    Private _Value1 As String = "NET"
+    Public Property Value1() As String
+        Get
+            Return _Value1
+        End Get
+        Set(ByVal value As String)
+            _Value1 = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _Value2 As String = "SEAL"
+    Public Property Value2() As String
+        Get
+            Return _Value2
+        End Get
+        Set(ByVal value As String)
+            _Value2 = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private B1 As SolidBrush
+
+    Private PT1, PT2 As PointF
+    Private SZ1, SZ2 As SizeF
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+
+        SZ1 = G.MeasureString(Value1, Font, Width, StringFormat.GenericTypographic)
+        SZ2 = G.MeasureString(Value2, Font, Width, StringFormat.GenericTypographic)
+
+        PT1 = New PointF(0, Height \ 2 - SZ1.Height / 2)
+        PT2 = New PointF(SZ1.Width + 1, Height \ 2 - SZ1.Height / 2)
+
+        G.DrawString(Value1, Font, Brushes.Black, PT1.X + 1, PT1.Y + 1)
+        G.DrawString(Value1, Font, Brushes.White, PT1)
+
+        G.DrawString(Value2, Font, Brushes.Black, PT2.X + 1, PT2.Y + 1)
+        G.DrawString(Value2, Font, B1, PT2)
+    End Sub
+
+End Class
+
+<DefaultEvent("TextChanged")> _
+Public Class NSTextBox
+    Inherits Control
+
+    Private _TextAlign As HorizontalAlignment = HorizontalAlignment.Left
+    Property TextAlign() As HorizontalAlignment
+        Get
+            Return _TextAlign
+        End Get
+        Set(ByVal value As HorizontalAlignment)
+            _TextAlign = value
+            If Base IsNot Nothing Then
+                Base.TextAlign = value
+            End If
+        End Set
+    End Property
+
+    Private _MaxLength As Integer = 32767
+    Property MaxLength() As Integer
+        Get
+            Return _MaxLength
+        End Get
+        Set(ByVal value As Integer)
+            _MaxLength = value
+            If Base IsNot Nothing Then
+                Base.MaxLength = value
+            End If
+        End Set
+    End Property
+
+    Private _ReadOnly As Boolean
+    Property [ReadOnly]() As Boolean
+        Get
+            Return _ReadOnly
+        End Get
+        Set(ByVal value As Boolean)
+            _ReadOnly = value
+            If Base IsNot Nothing Then
+                Base.ReadOnly = value
+            End If
+        End Set
+    End Property
+
+    Private _UseSystemPasswordChar As Boolean
+    Property UseSystemPasswordChar() As Boolean
+        Get
+            Return _UseSystemPasswordChar
+        End Get
+        Set(ByVal value As Boolean)
+            _UseSystemPasswordChar = value
+            If Base IsNot Nothing Then
+                Base.UseSystemPasswordChar = value
+            End If
+        End Set
+    End Property
+
+    Private _Multiline As Boolean
+    Property Multiline() As Boolean
+        Get
+            Return _Multiline
+        End Get
+        Set(ByVal value As Boolean)
+            _Multiline = value
+            If Base IsNot Nothing Then
+                Base.Multiline = value
+
+                If value Then
+                    Base.Height = Height - 11
+                Else
+                    Height = Base.Height + 11
+                End If
+            End If
+        End Set
+    End Property
+
+    Overrides Property Text As String
+        Get
+            Return MyBase.Text
+        End Get
+        Set(ByVal value As String)
+            MyBase.Text = value
+            If Base IsNot Nothing Then
+                Base.Text = value
+            End If
+        End Set
+    End Property
+
+    Overrides Property Font As Font
+        Get
+            Return MyBase.Font
+        End Get
+        Set(ByVal value As Font)
+            MyBase.Font = value
+            If Base IsNot Nothing Then
+                Base.Font = value
+                Base.Location = New Point(5, 5)
+                Base.Width = Width - 8
+
+                If Not _Multiline Then
+                    Height = Base.Height + 11
+                End If
+            End If
+        End Set
+    End Property
+
+    Protected Overrides Sub OnHandleCreated(e As EventArgs)
+        If Not Controls.Contains(Base) Then
+            Controls.Add(Base)
+        End If
+
+        MyBase.OnHandleCreated(e)
+    End Sub
+
+    Private Base As TextBox
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, True)
+
+        Cursor = Cursors.IBeam
+
+        Base = New TextBox
+        Base.Font = Font
+        Base.Text = Text
+        Base.MaxLength = _MaxLength
+        Base.Multiline = _Multiline
+        Base.ReadOnly = _ReadOnly
+        Base.UseSystemPasswordChar = _UseSystemPasswordChar
+
+        Base.ForeColor = Color.White
+        Base.BackColor = Color.FromArgb(50, 50, 50)
+
+        Base.BorderStyle = BorderStyle.None
+
+        Base.Location = New Point(5, 5)
+        Base.Width = Width - 14
+
+        If _Multiline Then
+            Base.Height = Height - 11
+        Else
+            Height = Base.Height + 11
+        End If
+
+        AddHandler Base.TextChanged, AddressOf OnBaseTextChanged
+        AddHandler Base.KeyDown, AddressOf OnBaseKeyDown
+
+        P1 = New Pen(Color.FromArgb(35, 35, 35))
+        P2 = New Pen(Color.FromArgb(55, 55, 55))
+    End Sub
+
+    Private GP1, GP2 As GraphicsPath
+
+    Private P1, P2 As Pen
+    Private PB1 As PathGradientBrush
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 0, Width - 1, Height - 1, 7)
+        GP2 = CreateRound(1, 1, Width - 3, Height - 3, 7)
+
+        PB1 = New PathGradientBrush(GP1)
+        PB1.CenterColor = Color.FromArgb(50, 50, 50)
+        PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
+        PB1.FocusScales = New PointF(0.9F, 0.5F)
+
+        G.FillPath(PB1, GP1)
+
+        G.DrawPath(P2, GP1)
+        G.DrawPath(P1, GP2)
+    End Sub
+
+    Private Sub OnBaseTextChanged(ByVal s As Object, ByVal e As EventArgs)
+        Text = Base.Text
+    End Sub
+
+    Private Sub OnBaseKeyDown(ByVal s As Object, ByVal e As KeyEventArgs)
+        If e.Control AndAlso e.KeyCode = Keys.A Then
+            Base.SelectAll()
+            e.SuppressKeyPress = True
+        End If
+    End Sub
+
+    Protected Overrides Sub OnResize(ByVal e As EventArgs)
+        Base.Location = New Point(5, 5)
+
+        Base.Width = Width - 10
+        Base.Height = Height - 11
+
+        MyBase.OnResize(e)
+    End Sub
+
+    Protected Overrides Sub OnMouseDown(e As MouseEventArgs)
+        Base.Focus()
+        MyBase.OnMouseDown(e)
+    End Sub
+
+    Protected Overrides Sub OnEnter(e As EventArgs)
+        Base.Focus()
+        Invalidate()
+        MyBase.OnEnter(e)
+    End Sub
+
+    Protected Overrides Sub OnLeave(e As EventArgs)
+        Invalidate()
+        MyBase.OnLeave(e)
+    End Sub
+
+End Class
+
+<DefaultEvent("CheckedChanged")> _
+Class NSCheckBox
+    Inherits Control
+
+    Event CheckedChanged(sender As Object)
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        P11 = New Pen(Color.FromArgb(55, 55, 55))
+        P22 = New Pen(Color.FromArgb(35, 35, 35))
+        P3 = New Pen(Color.Black, 2.0F)
+        P4 = New Pen(Color.White, 2.0F)
+    End Sub
+
+    Private _Checked As Boolean
+    Public Property Checked() As Boolean
+        Get
+            Return _Checked
+        End Get
+        Set(ByVal value As Boolean)
+            _Checked = value
+            RaiseEvent CheckedChanged(Me)
+
+            Invalidate()
+        End Set
+    End Property
+
+    Private GP1, GP2 As GraphicsPath
+
+    Private SZ1 As SizeF
+    Private PT1 As PointF
+
+    Private P11, P22, P3, P4 As Pen
+
+    Private PB1 As PathGradientBrush
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 2, Height - 5, Height - 5, 5)
+        GP2 = CreateRound(1, 3, Height - 7, Height - 7, 5)
+
+        PB1 = New PathGradientBrush(GP1)
+        PB1.CenterColor = Color.FromArgb(50, 50, 50)
+        PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
+        PB1.FocusScales = New PointF(0.3F, 0.3F)
+
+        G.FillPath(PB1, GP1)
+        G.DrawPath(P11, GP1)
+        G.DrawPath(P22, GP2)
+
+        If _Checked Then
+            G.DrawLine(P3, 5, Height - 9, 8, Height - 7)
+            G.DrawLine(P3, 7, Height - 7, Height - 8, 7)
+
+            G.DrawLine(P4, 4, Height - 10, 7, Height - 8)
+            G.DrawLine(P4, 6, Height - 8, Height - 9, 6)
+        End If
+
+        SZ1 = G.MeasureString(Text, Font)
+        PT1 = New PointF(Height - 3, Height \ 2 - SZ1.Height / 2)
+
+        G.DrawString(Text, Font, Brushes.Black, PT1.X + 1, PT1.Y + 1)
+        G.DrawString(Text, Font, Brushes.White, PT1)
+    End Sub
+
+    Protected Overrides Sub OnMouseDown(e As MouseEventArgs)
+        Checked = Not Checked
+    End Sub
+
+End Class
+
+<DefaultEvent("CheckedChanged")> _
+Class NSRadioButton
+    Inherits Control
+
+    Event CheckedChanged(sender As Object)
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        P1 = New Pen(Color.FromArgb(55, 55, 55))
+        P2 = New Pen(Color.FromArgb(35, 35, 35))
+    End Sub
+
+    Private _Checked As Boolean
+    Public Property Checked() As Boolean
+        Get
+            Return _Checked
+        End Get
+        Set(ByVal value As Boolean)
+            _Checked = value
+
+            If _Checked Then
+                InvalidateParent()
+            End If
+
+            RaiseEvent CheckedChanged(Me)
+            Invalidate()
+        End Set
+    End Property
+
+    Private Sub InvalidateParent()
+        If Parent Is Nothing Then Return
+
+        For Each C As Control In Parent.Controls
+            If Not (C Is Me) AndAlso (TypeOf C Is NSRadioButton) Then
+                DirectCast(C, NSRadioButton).Checked = False
+            End If
+        Next
+    End Sub
+
+    Private GP1 As GraphicsPath
+
+    Private SZ1 As SizeF
+    Private PT1 As PointF
+
+    Private P1, P2 As Pen
+
+    Private PB1 As PathGradientBrush
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = New GraphicsPath
+        GP1.AddEllipse(0, 2, Height - 5, Height - 5)
+
+        PB1 = New PathGradientBrush(GP1)
+        PB1.CenterColor = Color.FromArgb(50, 50, 50)
+        PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
+        PB1.FocusScales = New PointF(0.3F, 0.3F)
+
+        G.FillPath(PB1, GP1)
+
+        G.DrawEllipse(P1, 0, 2, Height - 5, Height - 5)
+        G.DrawEllipse(P2, 1, 3, Height - 7, Height - 7)
+
+        If _Checked Then
+            G.FillEllipse(Brushes.Black, 6, 8, Height - 15, Height - 15)
+            G.FillEllipse(Brushes.White, 5, 7, Height - 15, Height - 15)
+        End If
+
+        SZ1 = G.MeasureString(Text, Font)
+        PT1 = New PointF(Height - 3, Height \ 2 - SZ1.Height / 2)
+
+        G.DrawString(Text, Font, Brushes.Black, PT1.X + 1, PT1.Y + 1)
+        G.DrawString(Text, Font, Brushes.White, PT1)
+    End Sub
+
+    Protected Overrides Sub OnMouseDown(e As MouseEventArgs)
+        Checked = True
+        MyBase.OnMouseDown(e)
+    End Sub
+
+End Class
+
+Class NSComboBox
+    Inherits ComboBox
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        DrawMode = Windows.Forms.DrawMode.OwnerDrawFixed
+        DropDownStyle = ComboBoxStyle.DropDownList
+
+        BackColor = Color.FromArgb(50, 50, 50)
+        ForeColor = Color.White
+
+        P1 = New Pen(Color.FromArgb(35, 35, 35))
+        P2 = New Pen(Color.White, 2.0F)
+        P3 = New Pen(Brushes.Black, 2.0F)
+        P4 = New Pen(Color.FromArgb(65, 65, 65))
+
+        B1 = New SolidBrush(Color.FromArgb(65, 65, 65))
+        B2 = New SolidBrush(Color.FromArgb(55, 55, 55))
+    End Sub
+
+    Private GP1, GP2 As GraphicsPath
+
+    Private SZ1 As SizeF
+    Private PT1 As PointF
+
+    Private P1, P2, P3, P4 As Pen
+    Private B1, B2 As SolidBrush
+
+    Private GB1 As LinearGradientBrush
+
+    Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 0, Width - 1, Height - 1, 7)
+        GP2 = CreateRound(1, 1, Width - 3, Height - 3, 7)
+
+        GB1 = New LinearGradientBrush(ClientRectangle, Color.FromArgb(60, 60, 60), Color.FromArgb(55, 55, 55), 90.0F)
+        G.SetClip(GP1)
+        G.FillRectangle(GB1, ClientRectangle)
+        G.ResetClip()
+
+        G.DrawPath(P1, GP1)
+        G.DrawPath(P4, GP2)
+
+        SZ1 = G.MeasureString(Text, Font)
+        PT1 = New PointF(5, Height \ 2 - SZ1.Height / 2)
+
+        G.DrawString(Text, Font, Brushes.Black, PT1.X + 1, PT1.Y + 1)
+        G.DrawString(Text, Font, Brushes.White, PT1)
+
+        G.DrawLine(P3, Width - 15, 10, Width - 11, 13)
+        G.DrawLine(P3, Width - 7, 10, Width - 11, 13)
+        G.DrawLine(Pens.Black, Width - 11, 13, Width - 11, 14)
+
+        G.DrawLine(P2, Width - 16, 9, Width - 12, 12)
+        G.DrawLine(P2, Width - 8, 9, Width - 12, 12)
+        G.DrawLine(Pens.White, Width - 12, 12, Width - 12, 13)
+
+        G.DrawLine(P1, Width - 22, 0, Width - 22, Height)
+        G.DrawLine(P4, Width - 23, 1, Width - 23, Height - 2)
+        G.DrawLine(P4, Width - 21, 1, Width - 21, Height - 2)
+    End Sub
+
+    Protected Overrides Sub OnDrawItem(e As DrawItemEventArgs)
+        e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        If (e.State And DrawItemState.Selected) = DrawItemState.Selected Then
+            e.Graphics.FillRectangle(B1, e.Bounds)
+        Else
+            e.Graphics.FillRectangle(B2, e.Bounds)
+        End If
+
+        If Not e.Index = -1 Then
+            e.Graphics.DrawString(GetItemText(Items(e.Index)), e.Font, Brushes.White, e.Bounds)
+        End If
+    End Sub
+
+End Class
+
+Class NSTabControl
+    Inherits TabControl
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        SizeMode = TabSizeMode.Fixed
+        Alignment = TabAlignment.Left
+        ItemSize = New Size(28, 115)
+
+        DrawMode = TabDrawMode.OwnerDrawFixed
+
+        P1 = New Pen(Color.FromArgb(55, 55, 55))
+        P2 = New Pen(Color.FromArgb(35, 35, 35))
+        P3 = New Pen(Color.FromArgb(45, 45, 45), 2)
+
+        B1 = New SolidBrush(Color.FromArgb(50, 50, 50))
+        B2 = New SolidBrush(Color.FromArgb(35, 35, 35))
+        B3 = New SolidBrush(Color.FromArgb(205, 150, 0))
+        B4 = New SolidBrush(Color.FromArgb(65, 65, 65))
+
+        SF1 = New StringFormat()
+        SF1.LineAlignment = StringAlignment.Center
+    End Sub
+
+    Protected Overrides Sub OnControlAdded(e As ControlEventArgs)
+        If TypeOf e.Control Is TabPage Then
+            e.Control.BackColor = Color.FromArgb(50, 50, 50)
+        End If
+
+        MyBase.OnControlAdded(e)
+    End Sub
+
+    Private GP1, GP2, GP3, GP4 As GraphicsPath
+
+    Private R1, R2 As Rectangle
+
+    Private P1, P2, P3 As Pen
+    Private B1, B2, B3, B4 As SolidBrush
+
+    Private PB1 As PathGradientBrush
+
+    Private TP1 As TabPage
+    Private SF1 As StringFormat
+
+    Private Offset As Integer
+    Private ItemHeight As Integer
+
+    Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(Color.FromArgb(50, 50, 50))
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        ItemHeight = ItemSize.Height + 2
+
+        GP1 = CreateRound(0, 0, ItemHeight + 3, Height - 1, 7)
+        GP2 = CreateRound(1, 1, ItemHeight + 3, Height - 3, 7)
+
+        PB1 = New PathGradientBrush(GP1)
+        PB1.CenterColor = Color.FromArgb(50, 50, 50)
+        PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
+        PB1.FocusScales = New PointF(0.8F, 0.95F)
+
+        G.FillPath(PB1, GP1)
+
+        G.DrawPath(P1, GP1)
+        G.DrawPath(P2, GP2)
+
+        For I As Integer = 0 To TabCount - 1
+            R1 = GetTabRect(I)
+            R1.Y += 2
+            R1.Height -= 3
+            R1.Width += 1
+            R1.X -= 1
+
+            TP1 = TabPages(I)
+            Offset = 0
+
+            If SelectedIndex = I Then
+                G.FillRectangle(B1, R1)
+
+                For J As Integer = 0 To 1
+                    G.FillRectangle(B2, R1.X + 5 + (J * 5), R1.Y + 6, 2, R1.Height - 9)
+
+                    G.SmoothingMode = SmoothingMode.None
+                    G.FillRectangle(B3, R1.X + 5 + (J * 5), R1.Y + 5, 2, R1.Height - 9)
+                    G.SmoothingMode = SmoothingMode.AntiAlias
+
+                    Offset += 5
+                Next
+
+                G.DrawRectangle(P3, R1.X + 1, R1.Y - 1, R1.Width, R1.Height + 2)
+                G.DrawRectangle(P1, R1.X + 1, R1.Y + 1, R1.Width - 2, R1.Height - 2)
+                G.DrawRectangle(P2, R1)
+            Else
+                For J As Integer = 0 To 1
+                    G.FillRectangle(B2, R1.X + 5 + (J * 5), R1.Y + 6, 2, R1.Height - 9)
+
+                    G.SmoothingMode = SmoothingMode.None
+                    G.FillRectangle(B4, R1.X + 5 + (J * 5), R1.Y + 5, 2, R1.Height - 9)
+                    G.SmoothingMode = SmoothingMode.AntiAlias
+
+                    Offset += 5
+                Next
+            End If
+
+            R1.X += 5 + Offset
+
+            R2 = R1
+            R2.Y += 1
+            R2.X += 1
+
+            G.DrawString(TP1.Text, Font, Brushes.Black, R2, SF1)
+            G.DrawString(TP1.Text, Font, Brushes.White, R1, SF1)
+        Next
+
+        GP3 = CreateRound(ItemHeight, 0, Width - ItemHeight - 1, Height - 1, 7)
+        GP4 = CreateRound(ItemHeight + 1, 1, Width - ItemHeight - 3, Height - 3, 7)
+
+        G.DrawPath(P2, GP3)
+        G.DrawPath(P1, GP4)
+    End Sub
+
+End Class
+
+<DefaultEvent("CheckedChanged")> _
+Public Class NSOnOffBox
+    Inherits Control
+
+    Event CheckedChanged(sender As Object)
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        P1 = New Pen(Color.FromArgb(55, 55, 55))
+        P2 = New Pen(Color.FromArgb(35, 35, 35))
+        P3 = New Pen(Color.FromArgb(65, 65, 65))
+
+        B1 = New SolidBrush(Color.FromArgb(35, 35, 35))
+        B2 = New SolidBrush(Color.FromArgb(85, 85, 85))
+        B3 = New SolidBrush(Color.FromArgb(65, 65, 65))
+        B4 = New SolidBrush(Color.FromArgb(205, 150, 0))
+        B5 = New SolidBrush(Color.FromArgb(40, 40, 40))
+
+        SF1 = New StringFormat()
+        SF1.LineAlignment = StringAlignment.Center
+        SF1.Alignment = StringAlignment.Near
+
+        SF2 = New StringFormat()
+        SF2.LineAlignment = StringAlignment.Center
+        SF2.Alignment = StringAlignment.Far
+
+        Size = New Size(56, 24)
+        MinimumSize = Size
+        MaximumSize = Size
+    End Sub
+
+    Private _Checked As Boolean
+    Public Property Checked() As Boolean
+        Get
+            Return _Checked
+        End Get
+        Set(ByVal value As Boolean)
+            _Checked = value
+            RaiseEvent CheckedChanged(Me)
+
+            Invalidate()
+        End Set
+    End Property
+
+    Private GP1, GP2, GP3, GP4 As GraphicsPath
+
+    Private P1, P2, P3 As Pen
+    Private B1, B2, B3, B4, B5 As SolidBrush
+
+    Private PB1 As PathGradientBrush
+    Private GB1 As LinearGradientBrush
+
+    Private R1, R2, R3 As Rectangle
+    Private SF1, SF2 As StringFormat
+
+    Private Offset As Integer
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 0, Width - 1, Height - 1, 7)
+        GP2 = CreateRound(1, 1, Width - 3, Height - 3, 7)
+
+        PB1 = New PathGradientBrush(GP1)
+        PB1.CenterColor = Color.FromArgb(50, 50, 50)
+        PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
+        PB1.FocusScales = New PointF(0.3F, 0.3F)
+
+        G.FillPath(PB1, GP1)
+        G.DrawPath(P1, GP1)
+        G.DrawPath(P2, GP2)
+
+        R1 = New Rectangle(5, 0, Width - 10, Height + 2)
+        R2 = New Rectangle(6, 1, Width - 10, Height + 2)
+
+        R3 = New Rectangle(1, 1, (Width \ 2) - 1, Height - 3)
+
+        If _Checked Then
+            G.DrawString("On", Font, Brushes.Black, R2, SF1)
+            G.DrawString("On", Font, Brushes.White, R1, SF1)
+
+            R3.X += (Width \ 2) - 1
+        Else
+            G.DrawString("Off", Font, B1, R2, SF2)
+            G.DrawString("Off", Font, B2, R1, SF2)
+        End If
+
+        GP3 = CreateRound(R3, 7)
+        GP4 = CreateRound(R3.X + 1, R3.Y + 1, R3.Width - 2, R3.Height - 2, 7)
+
+        GB1 = New LinearGradientBrush(ClientRectangle, Color.FromArgb(60, 60, 60), Color.FromArgb(55, 55, 55), 90.0F)
+
+        G.FillPath(GB1, GP3)
+        G.DrawPath(P2, GP3)
+        G.DrawPath(P3, GP4)
+
+        Offset = R3.X + (R3.Width \ 2) - 3
+
+        For I As Integer = 0 To 1
+            If _Checked Then
+                G.FillRectangle(B1, Offset + (I * 5), 7, 2, Height - 14)
+            Else
+                G.FillRectangle(B3, Offset + (I * 5), 7, 2, Height - 14)
+            End If
+
+            G.SmoothingMode = SmoothingMode.None
+
+            If _Checked Then
+                G.FillRectangle(B4, Offset + (I * 5), 7, 2, Height - 14)
+            Else
+                G.FillRectangle(B5, Offset + (I * 5), 7, 2, Height - 14)
+            End If
+
+            G.SmoothingMode = SmoothingMode.AntiAlias
+        Next
+    End Sub
+
+    Protected Overrides Sub OnMouseDown(e As MouseEventArgs)
+        Checked = Not Checked
+        MyBase.OnMouseDown(e)
+    End Sub
+
+End Class
+
+Class NSControlButton
+    Inherits Control
+
+    Enum Button As Byte
+        None = 0
+        Minimize = 1
+        MaximizeRestore = 2
+        Close = 3
+    End Enum
+
+    Private _ControlButton As Button = Button.Close
+    Public Property ControlButton() As Button
+        Get
+            Return _ControlButton
+        End Get
+        Set(ByVal value As Button)
+            _ControlButton = value
+            Invalidate()
+        End Set
+    End Property
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        Anchor = AnchorStyles.Top Or AnchorStyles.Right
+
+        Width = 18
+        Height = 20
+
+        MinimumSize = Size
+        MaximumSize = Size
+
+        Margin = New Padding(0)
+    End Sub
+
+    Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
+        G = e.Graphics
+        G.Clear(BackColor)
+
+        Select Case _ControlButton
+            Case Button.Minimize
+                DrawMinimize(3, 10)
+            Case Button.MaximizeRestore
+                If FindForm().WindowState = FormWindowState.Normal Then
+                    DrawMaximize(3, 5)
+                Else
+                    DrawRestore(3, 4)
+                End If
+            Case Button.Close
+                DrawClose(4, 5)
+        End Select
+    End Sub
+
+    Private Sub DrawMinimize(ByVal x As Integer, ByVal y As Integer)
+        G.FillRectangle(Brushes.White, x, y, 12, 5)
+        G.DrawRectangle(Pens.Black, x, y, 11, 4)
+    End Sub
+
+    Private Sub DrawMaximize(ByVal x As Integer, ByVal y As Integer)
+        G.DrawRectangle(New Pen(Color.White, 2), x + 2, y + 2, 8, 6)
+        G.DrawRectangle(Pens.Black, x, y, 11, 9)
+        G.DrawRectangle(Pens.Black, x + 3, y + 3, 5, 3)
+    End Sub
+
+    Private Sub DrawRestore(ByVal x As Integer, ByVal y As Integer)
+        G.FillRectangle(Brushes.White, x + 3, y + 1, 8, 4)
+        G.FillRectangle(Brushes.White, x + 7, y + 5, 4, 4)
+        G.DrawRectangle(Pens.Black, x + 2, y + 0, 9, 9)
+
+        G.FillRectangle(Brushes.White, x + 1, y + 3, 2, 6)
+        G.FillRectangle(Brushes.White, x + 1, y + 9, 8, 2)
+        G.DrawRectangle(Pens.Black, x, y + 2, 9, 9)
+        G.DrawRectangle(Pens.Black, x + 3, y + 5, 3, 3)
+    End Sub
+
+    Private ClosePath As GraphicsPath
+    Private Sub DrawClose(ByVal x As Integer, ByVal y As Integer)
+        If ClosePath Is Nothing Then
+            ClosePath = New GraphicsPath
+            ClosePath.AddLine(x + 1, y, x + 3, y)
+            ClosePath.AddLine(x + 5, y + 2, x + 7, y)
+            ClosePath.AddLine(x + 9, y, x + 10, y + 1)
+            ClosePath.AddLine(x + 7, y + 4, x + 7, y + 5)
+            ClosePath.AddLine(x + 10, y + 8, x + 9, y + 9)
+            ClosePath.AddLine(x + 7, y + 9, x + 5, y + 7)
+            ClosePath.AddLine(x + 3, y + 9, x + 1, y + 9)
+            ClosePath.AddLine(x + 0, y + 8, x + 3, y + 5)
+            ClosePath.AddLine(x + 3, y + 4, x + 0, y + 1)
+        End If
+
+        G.FillPath(Brushes.White, ClosePath)
+        G.DrawPath(Pens.Black, ClosePath)
+    End Sub
+
+    Protected Overrides Sub OnMouseClick(ByVal e As MouseEventArgs)
+        If e.Button = Windows.Forms.MouseButtons.Left Then
+
+            Dim F As Form = FindForm()
+
+            Select Case _ControlButton
+                Case Button.Minimize
+                    F.WindowState = FormWindowState.Minimized
+                Case Button.MaximizeRestore
+                    If F.WindowState = FormWindowState.Normal Then
+                        F.WindowState = FormWindowState.Maximized
+                    Else
+                        F.WindowState = FormWindowState.Normal
+                    End If
+                Case Button.Close
+                    F.Close()
+            End Select
+
+        End If
+
+        Invalidate()
+        MyBase.OnMouseClick(e)
+    End Sub
+
+End Class
+
+Class NSGroupBox
+    Inherits ContainerControl
+
+    Private _DrawSeperator As Boolean
+    Public Property DrawSeperator() As Boolean
+        Get
+            Return _DrawSeperator
+        End Get
+        Set(ByVal value As Boolean)
+            _DrawSeperator = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _Title As String = "GroupBox"
+    Public Property Title() As String
+        Get
+            Return _Title
+        End Get
+        Set(ByVal value As String)
+            _Title = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _SubTitle As String = "Details"
+    Public Property SubTitle() As String
+        Get
+            Return _SubTitle
+        End Get
+        Set(ByVal value As String)
+            _SubTitle = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _TitleFont As Font
+    Private _SubTitleFont As Font
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        _TitleFont = New Font("Verdana", 10.0F)
+        _SubTitleFont = New Font("Verdana", 6.5F)
+
+        P1 = New Pen(Color.FromArgb(35, 35, 35))
+        P2 = New Pen(Color.FromArgb(55, 55, 55))
+
+        B1 = New SolidBrush(Color.FromArgb(205, 150, 0))
+    End Sub
+
+    Private GP1, GP2 As GraphicsPath
+
+    Private PT1 As PointF
+    Private SZ1, SZ2 As SizeF
+
+    Private P1, P2 As Pen
+    Private B1 As SolidBrush
+
+    Protected Overrides Sub OnPaint(ByVal e As PaintEventArgs)
+        G = e.Graphics
+        G.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 0, Width - 1, Height - 1, 7)
+        GP2 = CreateRound(1, 1, Width - 3, Height - 3, 7)
+
+        G.DrawPath(P1, GP1)
+        G.DrawPath(P2, GP2)
+
+        SZ1 = G.MeasureString(_Title, _TitleFont, Width, StringFormat.GenericTypographic)
+        SZ2 = G.MeasureString(_SubTitle, _SubTitleFont, Width, StringFormat.GenericTypographic)
+
+        G.DrawString(_Title, _TitleFont, Brushes.Black, 6, 6)
+        G.DrawString(_Title, _TitleFont, B1, 5, 5)
+
+        PT1 = New PointF(6.0F, SZ1.Height + 4.0F)
+
+        G.DrawString(_SubTitle, _SubTitleFont, Brushes.Black, PT1.X + 1, PT1.Y + 1)
+        G.DrawString(_SubTitle, _SubTitleFont, Brushes.White, PT1.X, PT1.Y)
+
+        If _DrawSeperator Then
+            Dim Y As Integer = CInt(PT1.Y + SZ2.Height) + 8
+
+            G.DrawLine(P1, 4, Y, Width - 5, Y)
+            G.DrawLine(P2, 4, Y + 1, Width - 5, Y + 1)
+        End If
+    End Sub
+
+End Class
+
+'NSTheme Components
+
+'IMPORTANT:
+'Please leave these comments in place as they help protect intellectual rights and allow
+'developers to determine the version of the theme they are using. The preffered method
+'of distributing this theme is through the Nimoru Software home page at nimoru.com.
+
+'Name: Net Seal Theme
+'Created: 4/15/2013
+'Version: 1.0.0.0 beta
+'Site: http://nimoru.com/
+
+'This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+'To view a copy of this license, please visit http://creativecommons.org/licenses/by/3.0/
+
+'Copyright © 2013 Nimoru Software
+<DefaultEvent("Scroll")> _
+Class NSTrackBar
+    Inherits Control
+
+    Event Scroll(ByVal sender As Object)
+
+    Private _Minimum As Integer
+    Property Minimum() As Integer
+        Get
+            Return _Minimum
+        End Get
+        Set(ByVal value As Integer)
+            If value < 0 Then
+                Throw New Exception("Property value is not valid.")
+            End If
+
+            _Minimum = value
+            If value > _Value Then _Value = value
+            If value > _Maximum Then _Maximum = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _Maximum As Integer = 10
+    Property Maximum() As Integer
+        Get
+            Return _Maximum
+        End Get
+        Set(ByVal value As Integer)
+            If value < 0 Then
+                Throw New Exception("Property value is not valid.")
+            End If
+
+            _Maximum = value
+            If value < _Value Then _Value = value
+            If value < _Minimum Then _Minimum = value
+            Invalidate()
+        End Set
+    End Property
+
+    Private _Value As Integer
+    Property Value() As Integer
+        Get
+            Return _Value
+        End Get
+        Set(ByVal value As Integer)
+            If value = _Value Then Return
+
+            If value > _Maximum OrElse value < _Minimum Then
+                Throw New Exception("Property value is not valid.")
+            End If
+
+            _Value = value
+            Invalidate()
+
+            RaiseEvent Scroll(Me)
+        End Set
+    End Property
+
+    Sub New()
+        SetStyle(DirectCast(139286, ControlStyles), True)
+        SetStyle(ControlStyles.Selectable, False)
+
+        Height = 17
+
+        P1 = New Pen(Color.FromArgb(150, 110, 0), 2)
+        P2 = New Pen(Color.FromArgb(55, 55, 55))
+        P3 = New Pen(Color.FromArgb(35, 35, 35))
+        P4 = New Pen(Color.FromArgb(65, 65, 65))
+    End Sub
+
+    Private GP1, GP2, GP3, GP4 As GraphicsPath
+
+    Private R1, R2, R3 As Rectangle
+    Private I1 As Integer
+
+    Private P1, P2, P3, P4 As Pen
+
+    Private GB1, GB2, GB3 As LinearGradientBrush
+
+    Protected Overrides Sub OnPaint(e As System.Windows.Forms.PaintEventArgs)
+        G = e.Graphics
+
+        G.Clear(BackColor)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        GP1 = CreateRound(0, 5, Width - 1, 10, 5)
+        GP2 = CreateRound(1, 6, Width - 3, 8, 5)
+
+        R1 = New Rectangle(0, 7, Width - 1, 5)
+        GB1 = New LinearGradientBrush(R1, Color.FromArgb(45, 45, 45), Color.FromArgb(50, 50, 50), 90.0F)
+
+        I1 = CInt((_Value - _Minimum) / (_Maximum - _Minimum) * (Width - 11))
+        R2 = New Rectangle(I1, 0, 10, 20)
+
+        G.SetClip(GP2)
+        G.FillRectangle(GB1, R1)
+
+        R3 = New Rectangle(1, 7, R2.X + R2.Width - 2, 8)
+        GB2 = New LinearGradientBrush(R3, Color.FromArgb(205, 150, 0), Color.FromArgb(150, 110, 0), 90.0F)
+
+        G.SmoothingMode = SmoothingMode.None
+        G.FillRectangle(GB2, R3)
+        G.SmoothingMode = SmoothingMode.AntiAlias
+
+        For I As Integer = 0 To R3.Width - 15 Step 5
+            G.DrawLine(P1, I, 0, I + 15, Height)
+        Next
+
+        G.ResetClip()
+
+        G.DrawPath(P2, GP1)
+        G.DrawPath(P3, GP2)
+
+        GP3 = CreateRound(R2, 5)
+        GP4 = CreateRound(R2.X + 1, R2.Y + 1, R2.Width - 2, R2.Height - 2, 5)
+        GB3 = New LinearGradientBrush(ClientRectangle, Color.FromArgb(60, 60, 60), Color.FromArgb(55, 55, 55), 90.0F)
+
+        G.FillPath(GB3, GP3)
+        G.DrawPath(P3, GP3)
+        G.DrawPath(P4, GP4)
+    End Sub
+
+    Private TrackDown As Boolean
+    Protected Overrides Sub OnMouseDown(ByVal e As MouseEventArgs)
+        If e.Button = Windows.Forms.MouseButtons.Left Then
+            I1 = CInt((_Value - _Minimum) / (_Maximum - _Minimum) * (Width - 11))
+            R2 = New Rectangle(I1, 0, 10, 20)
+
+            TrackDown = R2.Contains(e.Location)
+        End If
+
+        MyBase.OnMouseDown(e)
+    End Sub
+
+    Protected Overrides Sub OnMouseMove(ByVal e As MouseEventArgs)
+        If TrackDown AndAlso e.X > -1 AndAlso e.X < (Width + 1) Then
+            Value = _Minimum + CInt((_Maximum - _Minimum) * (e.X / Width))
+        End If
+
+        MyBase.OnMouseMove(e)
+    End Sub
+
+    Protected Overrides Sub OnMouseUp(ByVal e As MouseEventArgs)
+        TrackDown = False
+        MyBase.OnMouseUp(e)
+    End Sub
+
+End Class
+Class NSContextMenu
+    Inherits ContextMenuStrip
+
+    Sub New()
+        Renderer = New ToolStripProfessionalRenderer(New NSColorTable())
+        ForeColor = Color.White
+    End Sub
+
+    Protected Overrides Sub OnPaint(e As PaintEventArgs)
+        e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit
+        MyBase.OnPaint(e)
+    End Sub
+
+End Class
+Class NSColorTable
+    Inherits ProfessionalColorTable
+
+    Private BackColor As Color = Color.FromArgb(55, 55, 55)
+
+    Public Overrides ReadOnly Property ButtonSelectedBorder() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property CheckBackground() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property CheckPressedBackground() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property CheckSelectedBackground() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property ImageMarginGradientBegin() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property ImageMarginGradientEnd() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property ImageMarginGradientMiddle() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property MenuBorder() As Color
+        Get
+            Return Color.FromArgb(25, 25, 25)
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property MenuItemBorder() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property MenuItemSelected() As Color
+        Get
+            Return Color.FromArgb(65, 65, 65)
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property SeparatorDark() As Color
+        Get
+            Return Color.FromArgb(35, 35, 35)
+        End Get
+    End Property
+
+    Public Overrides ReadOnly Property ToolStripDropDownBackground() As Color
+        Get
+            Return BackColor
+        End Get
+    End Property
+
 End Class
 Class CustomButton
     Inherits ThemeControl154

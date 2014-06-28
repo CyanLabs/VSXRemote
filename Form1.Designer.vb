@@ -29,8 +29,9 @@ Partial Class Form1
         Me.ShowInterface = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ExitApplication = New System.Windows.Forms.ToolStripMenuItem()
-        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.CustomTheme1 = New Pioneer_VSX_Series_Remote_Control.CustomTheme()
+        Me.SliderMVolume = New Pioneer_VSX_Series_Remote_Control.NSTrackBar()
+        Me.CustomSideButton1 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.btnPwr = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.btnHide = New Pioneer_VSX_Series_Remote_Control.CustomButton()
         Me.btnMVolumeDown = New Pioneer_VSX_Series_Remote_Control.CustomButton()
@@ -39,6 +40,7 @@ Partial Class Form1
         Me.lblPowerOff = New System.Windows.Forms.Label()
         Me.lblMuted = New System.Windows.Forms.Label()
         Me.lblMVolume = New System.Windows.Forms.Label()
+        Me.CustomMiddleBar1 = New Pioneer_VSX_Series_Remote_Control.CustomMiddleBar()
         Me.btnpwer = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.NotifyIcon1Menu.SuspendLayout()
         Me.CustomTheme1.SuspendLayout()
@@ -77,14 +79,12 @@ Partial Class Form1
         Me.ExitApplication.Size = New System.Drawing.Size(159, 22)
         Me.ExitApplication.Text = "Exit VSX Remote"
         '
-        'Timer1
-        '
-        Me.Timer1.Interval = 3000
-        '
         'CustomTheme1
         '
         Me.CustomTheme1.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.CustomTheme1.BorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.CustomTheme1.Controls.Add(Me.SliderMVolume)
+        Me.CustomTheme1.Controls.Add(Me.CustomSideButton1)
         Me.CustomTheme1.Controls.Add(Me.btnPwr)
         Me.CustomTheme1.Controls.Add(Me.btnHide)
         Me.CustomTheme1.Controls.Add(Me.btnMVolumeDown)
@@ -93,6 +93,7 @@ Partial Class Form1
         Me.CustomTheme1.Controls.Add(Me.lblPowerOff)
         Me.CustomTheme1.Controls.Add(Me.lblMuted)
         Me.CustomTheme1.Controls.Add(Me.lblMVolume)
+        Me.CustomTheme1.Controls.Add(Me.CustomMiddleBar1)
         Me.CustomTheme1.Customization = "6Ojo//z8/P/y8vL//////1BQUP//////AAAA////////////lpaW/w=="
         Me.CustomTheme1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.CustomTheme1.Font = New System.Drawing.Font("Verdana", 8.0!)
@@ -102,13 +103,41 @@ Partial Class Form1
         Me.CustomTheme1.Name = "CustomTheme1"
         Me.CustomTheme1.NoRounding = False
         Me.CustomTheme1.Sizable = True
-        Me.CustomTheme1.Size = New System.Drawing.Size(261, 102)
+        Me.CustomTheme1.Size = New System.Drawing.Size(261, 348)
         Me.CustomTheme1.SmartBounds = True
         Me.CustomTheme1.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
         Me.CustomTheme1.TabIndex = 3
         Me.CustomTheme1.Text = "VSX Remote"
         Me.CustomTheme1.TransparencyKey = System.Drawing.Color.Fuchsia
         Me.CustomTheme1.Transparent = False
+        '
+        'SliderMVolume
+        '
+        Me.SliderMVolume.BackColor = System.Drawing.Color.FromArgb(CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer))
+        Me.SliderMVolume.Location = New System.Drawing.Point(12, 103)
+        Me.SliderMVolume.Maximum = 10
+        Me.SliderMVolume.Minimum = 0
+        Me.SliderMVolume.Name = "SliderMVolume"
+        Me.SliderMVolume.Size = New System.Drawing.Size(237, 23)
+        Me.SliderMVolume.TabIndex = 17
+        Me.SliderMVolume.Text = "NsTrackBar1"
+        Me.SliderMVolume.Value = 0
+        '
+        'CustomSideButton1
+        '
+        Me.CustomSideButton1.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton1.Customization = ""
+        Me.CustomSideButton1.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Square
+        Me.CustomSideButton1.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.CustomSideButton1.Image = Nothing
+        Me.CustomSideButton1.Location = New System.Drawing.Point(22, 306)
+        Me.CustomSideButton1.Name = "CustomSideButton1"
+        Me.CustomSideButton1.NoRounding = False
+        Me.CustomSideButton1.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.CustomSideButton1.Size = New System.Drawing.Size(237, 30)
+        Me.CustomSideButton1.TabIndex = 15
+        Me.CustomSideButton1.Text = "Input 1"
+        Me.CustomSideButton1.Transparent = False
         '
         'btnPwr
         '
@@ -223,6 +252,20 @@ Partial Class Form1
         Me.lblMVolume.Text = "VOLUME 000%"
         Me.lblMVolume.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
+        'CustomMiddleBar1
+        '
+        Me.CustomMiddleBar1.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomMiddleBar1.Customization = ""
+        Me.CustomMiddleBar1.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.CustomMiddleBar1.Image = Nothing
+        Me.CustomMiddleBar1.Location = New System.Drawing.Point(10, 65)
+        Me.CustomMiddleBar1.Name = "CustomMiddleBar1"
+        Me.CustomMiddleBar1.NoRounding = False
+        Me.CustomMiddleBar1.Size = New System.Drawing.Size(122, 31)
+        Me.CustomMiddleBar1.TabIndex = 14
+        Me.CustomMiddleBar1.Text = "CustomMiddleBar1"
+        Me.CustomMiddleBar1.Transparent = False
+        '
         'btnpwer
         '
         Me.btnpwer.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
@@ -243,7 +286,8 @@ Partial Class Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(261, 102)
+        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
+        Me.ClientSize = New System.Drawing.Size(261, 348)
         Me.Controls.Add(Me.CustomTheme1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -274,6 +318,8 @@ Partial Class Form1
     Friend WithEvents lblMuted As System.Windows.Forms.Label
     Friend WithEvents btnMute As Pioneer_VSX_Series_Remote_Control.CustomSideButton
     Friend WithEvents lblPowerOff As System.Windows.Forms.Label
-    Friend WithEvents Timer1 As System.Windows.Forms.Timer
+    Friend WithEvents CustomSideButton1 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomMiddleBar1 As Pioneer_VSX_Series_Remote_Control.CustomMiddleBar
+    Friend WithEvents SliderMVolume As Pioneer_VSX_Series_Remote_Control.NSTrackBar
 
 End Class
