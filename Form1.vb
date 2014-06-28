@@ -262,7 +262,10 @@ Public Class Form1
     End Sub
 
     Private Sub SliderMVolume_Scroll(sender As Object) Handles SliderMVolume.Scroll
+        'Sets volume level to the value of the slider and create a percentage variable for use in the GUI
         Dim percent As Integer = (SliderMVolume.Value / 185) * 100
+
+        'if value is less than 10 pre-fix 2 "0"s else if less than 100 pre-fix 1 "0" else just send the command without added "0"s
         If SliderMVolume.Value < 10 Then
             SendCommands("00" & SliderMVolume.Value.ToString & "VL", "VL")
         ElseIf SliderMVolume.Value < 100 Then
