@@ -8,6 +8,7 @@ Public Class Form1
     Dim hostIp As IPAddress, serverIp As Byte()
     Dim ep As IPEndPoint
     Dim tnSocket As New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+    Dim autohide As Boolean = True
 
     'args used for ip scanner
     Private Class ScannerArgs
@@ -66,8 +67,7 @@ Public Class Form1
 
         'updates volume, mute, power status etc.
         PollInfo()
-
-        Timer1.Start()
+        If autohide Then Timer1.Start()
     End Sub
     Private Sub PollInfo()
         'checks if device is powered on or not
@@ -264,7 +264,7 @@ Public Class Form1
         Me.WindowState = FormWindowState.Normal
         Me.Opacity = 1
         Me.ShowInTaskbar = True
-        Timer1.Start()
+        If autohide Then Timer1.Start()
     End Sub
 
     Private Sub btnHide_Click(sender As Object, e As EventArgs) Handles btnHide.Click
@@ -275,7 +275,7 @@ Public Class Form1
             Threading.Thread.Sleep(25)
         Next counter
         Me.ShowInTaskbar = False
-        Timer1.Stop()
+        If autohide Then Timer1.Stop()
     End Sub
 
     Private Sub ExitApplication_Click(sender As Object, e As EventArgs) Handles ExitApplication.Click
@@ -308,8 +308,6 @@ Public Class Form1
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
         Dim Rectangle = New Rectangle(Me.Location.X, Me.Location.Y, Me.Width, Me.Height)
         Dim pt As POINTAPI
-        pt.x = -1
-        pt.y = -1
         GetCursorPos(pt)
         If Not Rectangle.Contains(New Point(pt.x, pt.y)) Then
             For counter = 1.1 To 0.0 Step -0.1
@@ -318,7 +316,7 @@ Public Class Form1
                 Threading.Thread.Sleep(25)
             Next counter
             Me.ShowInTaskbar = False
-            Timer1.Stop()
+            If autohide Then Timer1.Stop()
         End If
     End Sub
 
@@ -331,4 +329,18 @@ Public Class Form1
         Public x As Integer
         Public y As Integer
     End Structure
+
+    Private Sub btnAutoHide_Click(sender As Object, e As EventArgs) Handles btnAutoHide.Click
+        'checks if autohide is currently enabled if it is disables it else enables it, also it changes button text to relevant message and toggles timer
+        If autohide = False Then
+            autohide = True
+            btnAutoHide.Text = "Always Show"
+            Timer1.Start()
+        Else
+            autohide = False
+            btnAutoHide.Text = "Auto Hide"
+            Timer1.Stop()
+        End If
+    End Sub
+
 End Class

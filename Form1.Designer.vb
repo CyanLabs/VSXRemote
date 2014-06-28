@@ -35,6 +35,7 @@ Partial Class Form1
         Me.lblMainInput = New System.Windows.Forms.Label()
         Me.SliderMVolume = New Pioneer_VSX_Series_Remote_Control.NSTrackBar()
         Me.btnPwr = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnAutoHide = New Pioneer_VSX_Series_Remote_Control.CustomButton()
         Me.btnHide = New Pioneer_VSX_Series_Remote_Control.CustomButton()
         Me.btnMVolumeDown = New Pioneer_VSX_Series_Remote_Control.CustomButton()
         Me.btnMVolumeUp = New Pioneer_VSX_Series_Remote_Control.CustomButton()
@@ -92,6 +93,7 @@ Partial Class Form1
         Me.CustomTheme1.Controls.Add(Me.lblMainInput)
         Me.CustomTheme1.Controls.Add(Me.SliderMVolume)
         Me.CustomTheme1.Controls.Add(Me.btnPwr)
+        Me.CustomTheme1.Controls.Add(Me.btnAutoHide)
         Me.CustomTheme1.Controls.Add(Me.btnHide)
         Me.CustomTheme1.Controls.Add(Me.btnMVolumeDown)
         Me.CustomTheme1.Controls.Add(Me.btnMVolumeUp)
@@ -104,10 +106,10 @@ Partial Class Form1
         Me.CustomTheme1.Font = New System.Drawing.Font("Verdana", 8.0!)
         Me.CustomTheme1.Image = Nothing
         Me.CustomTheme1.Location = New System.Drawing.Point(0, 0)
-        Me.CustomTheme1.Movable = True
+        Me.CustomTheme1.Movable = False
         Me.CustomTheme1.Name = "CustomTheme1"
         Me.CustomTheme1.NoRounding = False
-        Me.CustomTheme1.Sizable = True
+        Me.CustomTheme1.Sizable = False
         Me.CustomTheme1.Size = New System.Drawing.Size(296, 130)
         Me.CustomTheme1.SmartBounds = True
         Me.CustomTheme1.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
@@ -166,6 +168,21 @@ Partial Class Form1
         Me.btnPwr.TabIndex = 8
         Me.btnPwr.Text = "OFF"
         Me.btnPwr.Transparent = False
+        '
+        'btnAutoHide
+        '
+        Me.btnAutoHide.BackColor = System.Drawing.Color.Black
+        Me.btnAutoHide.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnAutoHide.Customization = ""
+        Me.btnAutoHide.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnAutoHide.Image = Nothing
+        Me.btnAutoHide.Location = New System.Drawing.Point(3, 5)
+        Me.btnAutoHide.Name = "btnAutoHide"
+        Me.btnAutoHide.NoRounding = False
+        Me.btnAutoHide.Size = New System.Drawing.Size(97, 19)
+        Me.btnAutoHide.TabIndex = 10
+        Me.btnAutoHide.Text = "Always Show"
+        Me.btnAutoHide.Transparent = False
         '
         'btnHide
         '
@@ -260,7 +277,7 @@ Partial Class Form1
         Me.lblMVolume.ForeColor = System.Drawing.Color.Lime
         Me.lblMVolume.Location = New System.Drawing.Point(202, 27)
         Me.lblMVolume.Name = "lblMVolume"
-        Me.lblMVolume.Size = New System.Drawing.Size(86, 33)
+        Me.lblMVolume.Size = New System.Drawing.Size(91, 33)
         Me.lblMVolume.TabIndex = 2
         Me.lblMVolume.Text = "000%"
         Me.lblMVolume.TextAlign = System.Drawing.ContentAlignment.TopRight
@@ -321,5 +338,6 @@ Partial Class Form1
     Friend WithEvents SliderMVolume As Pioneer_VSX_Series_Remote_Control.NSTrackBar
     Friend WithEvents lblMainInput As System.Windows.Forms.Label
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
+    Friend WithEvents btnAutoHide As Pioneer_VSX_Series_Remote_Control.CustomButton
 
 End Class
