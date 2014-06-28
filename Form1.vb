@@ -36,7 +36,7 @@ Public Class Form1
         Loop
         TrackBar1.Value = SendCommands("VU").ToString.Replace("VOL", "").TrimStart("0"c)
         Dim percent As Integer = (TrackBar1.Value / 185) * 100
-        Label1.Text = "Volume: " & percent & "%"
+        Label1.Text = "VOLUME " & percent & "%"
     End Sub
 
     Dim ep As IPEndPoint
@@ -101,13 +101,13 @@ Public Class Form1
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         TrackBar1.Value = SendCommands("VU").ToString.Replace("VOL", "").TrimStart("0"c)
         Dim percent As Integer = (TrackBar1.Value / 185) * 100
-        Label1.Text = "Volume: " & percent & "%"
+        Label1.Text = "VOLUME " & percent & "%"
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         TrackBar1.Value = SendCommands("VD").ToString.Replace("VOL", "").TrimStart("0"c)
         Dim percent As Integer = (TrackBar1.Value / 185) * 100
-        Label1.Text = "Volume: " & percent & "%"
+        Label1.Text = "VOLUME " & percent & "%"
     End Sub
 
     Private Sub TrackBar1_Scroll(sender As Object, e As EventArgs) Handles TrackBar1.Scroll
@@ -119,6 +119,6 @@ Public Class Form1
         Else
             SendCommands(TrackBar1.Value.ToString & "VL")
         End If
-        Label1.Text = "Volume: " & percent & "%"
+        Label1.Text = "VOLUME " & percent & "%"
     End Sub
 End Class

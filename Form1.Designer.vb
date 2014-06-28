@@ -31,7 +31,7 @@ Partial Class Form1
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(17, 62)
+        Me.Button2.Location = New System.Drawing.Point(17, 67)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(131, 23)
         Me.Button2.TabIndex = 1
@@ -40,7 +40,7 @@ Partial Class Form1
         '
         'Button3
         '
-        Me.Button3.Location = New System.Drawing.Point(17, 38)
+        Me.Button3.Location = New System.Drawing.Point(17, 46)
         Me.Button3.Name = "Button3"
         Me.Button3.Size = New System.Drawing.Size(131, 23)
         Me.Button3.TabIndex = 1
@@ -49,20 +49,24 @@ Partial Class Form1
         '
         'Label1
         '
-        Me.Label1.AutoSize = True
+        Me.Label1.BackColor = System.Drawing.Color.Black
         Me.Label1.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(14, 4)
+        Me.Label1.ForeColor = System.Drawing.Color.Lime
+        Me.Label1.Location = New System.Drawing.Point(-2, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(136, 30)
+        Me.Label1.Size = New System.Drawing.Size(170, 34)
         Me.Label1.TabIndex = 2
-        Me.Label1.Text = "Volume: 000"
+        Me.Label1.Text = "VOLUME 00%"
+        Me.Label1.TextAlign = System.Drawing.ContentAlignment.TopCenter
         '
         'TrackBar1
         '
-        Me.TrackBar1.Location = New System.Drawing.Point(8, 98)
+        Me.TrackBar1.LargeChange = 25
+        Me.TrackBar1.Location = New System.Drawing.Point(8, 97)
         Me.TrackBar1.Maximum = 185
         Me.TrackBar1.Name = "TrackBar1"
         Me.TrackBar1.Size = New System.Drawing.Size(149, 45)
+        Me.TrackBar1.SmallChange = 5
         Me.TrackBar1.TabIndex = 3
         Me.TrackBar1.TickStyle = System.Windows.Forms.TickStyle.None
         Me.TrackBar1.Value = 10
@@ -71,7 +75,7 @@ Partial Class Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(164, 130)
+        Me.ClientSize = New System.Drawing.Size(164, 127)
         Me.Controls.Add(Me.TrackBar1)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Button3)
