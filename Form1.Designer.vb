@@ -29,14 +29,16 @@ Partial Class Form1
         Me.ShowInterface = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ExitApplication = New System.Windows.Forms.ToolStripMenuItem()
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.CustomTheme1 = New Pioneer_VSX_Series_Remote_Control.CustomTheme()
         Me.btnPwr = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
-        Me.lblMuted = New System.Windows.Forms.Label()
         Me.btnHide = New Pioneer_VSX_Series_Remote_Control.CustomButton()
         Me.btnMVolumeDown = New Pioneer_VSX_Series_Remote_Control.CustomButton()
         Me.btnMVolumeUp = New Pioneer_VSX_Series_Remote_Control.CustomButton()
-        Me.lblMVolume = New System.Windows.Forms.Label()
         Me.btnMute = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.lblPowerOff = New System.Windows.Forms.Label()
+        Me.lblMuted = New System.Windows.Forms.Label()
+        Me.lblMVolume = New System.Windows.Forms.Label()
         Me.btnpwer = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.NotifyIcon1Menu.SuspendLayout()
         Me.CustomTheme1.SuspendLayout()
@@ -75,17 +77,22 @@ Partial Class Form1
         Me.ExitApplication.Size = New System.Drawing.Size(159, 22)
         Me.ExitApplication.Text = "Exit VSX Remote"
         '
+        'Timer1
+        '
+        Me.Timer1.Interval = 3000
+        '
         'CustomTheme1
         '
         Me.CustomTheme1.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.CustomTheme1.BorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.CustomTheme1.Controls.Add(Me.btnPwr)
-        Me.CustomTheme1.Controls.Add(Me.lblMuted)
         Me.CustomTheme1.Controls.Add(Me.btnHide)
         Me.CustomTheme1.Controls.Add(Me.btnMVolumeDown)
         Me.CustomTheme1.Controls.Add(Me.btnMVolumeUp)
-        Me.CustomTheme1.Controls.Add(Me.lblMVolume)
         Me.CustomTheme1.Controls.Add(Me.btnMute)
+        Me.CustomTheme1.Controls.Add(Me.lblPowerOff)
+        Me.CustomTheme1.Controls.Add(Me.lblMuted)
+        Me.CustomTheme1.Controls.Add(Me.lblMVolume)
         Me.CustomTheme1.Customization = "6Ojo//z8/P/y8vL//////1BQUP//////AAAA////////////lpaW/w=="
         Me.CustomTheme1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.CustomTheme1.Font = New System.Drawing.Font("Verdana", 8.0!)
@@ -119,19 +126,6 @@ Partial Class Form1
         Me.btnPwr.TabIndex = 8
         Me.btnPwr.Text = "OFF"
         Me.btnPwr.Transparent = False
-        '
-        'lblMuted
-        '
-        Me.lblMuted.BackColor = System.Drawing.Color.Black
-        Me.lblMuted.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblMuted.ForeColor = System.Drawing.Color.Red
-        Me.lblMuted.Location = New System.Drawing.Point(3, 27)
-        Me.lblMuted.Name = "lblMuted"
-        Me.lblMuted.Size = New System.Drawing.Size(256, 33)
-        Me.lblMuted.TabIndex = 11
-        Me.lblMuted.Text = "VOLUME MUTED"
-        Me.lblMuted.TextAlign = System.Drawing.ContentAlignment.TopRight
-        Me.lblMuted.Visible = False
         '
         'btnHide
         '
@@ -176,18 +170,6 @@ Partial Class Form1
         Me.btnMVolumeUp.Text = "VOL +"
         Me.btnMVolumeUp.Transparent = False
         '
-        'lblMVolume
-        '
-        Me.lblMVolume.BackColor = System.Drawing.Color.Black
-        Me.lblMVolume.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblMVolume.ForeColor = System.Drawing.Color.Lime
-        Me.lblMVolume.Location = New System.Drawing.Point(3, 27)
-        Me.lblMVolume.Name = "lblMVolume"
-        Me.lblMVolume.Size = New System.Drawing.Size(256, 33)
-        Me.lblMVolume.TabIndex = 2
-        Me.lblMVolume.Text = "VOLUME 000%"
-        Me.lblMVolume.TextAlign = System.Drawing.ContentAlignment.TopRight
-        '
         'btnMute
         '
         Me.btnMute.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
@@ -203,6 +185,43 @@ Partial Class Form1
         Me.btnMute.TabIndex = 12
         Me.btnMute.Text = "   MUTE"
         Me.btnMute.Transparent = False
+        '
+        'lblPowerOff
+        '
+        Me.lblPowerOff.BackColor = System.Drawing.Color.Black
+        Me.lblPowerOff.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblPowerOff.ForeColor = System.Drawing.Color.Red
+        Me.lblPowerOff.Location = New System.Drawing.Point(3, 27)
+        Me.lblPowerOff.Name = "lblPowerOff"
+        Me.lblPowerOff.Size = New System.Drawing.Size(256, 33)
+        Me.lblPowerOff.TabIndex = 13
+        Me.lblPowerOff.Text = "DEVICE OFF"
+        Me.lblPowerOff.TextAlign = System.Drawing.ContentAlignment.TopRight
+        '
+        'lblMuted
+        '
+        Me.lblMuted.BackColor = System.Drawing.Color.Black
+        Me.lblMuted.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblMuted.ForeColor = System.Drawing.Color.Red
+        Me.lblMuted.Location = New System.Drawing.Point(3, 27)
+        Me.lblMuted.Name = "lblMuted"
+        Me.lblMuted.Size = New System.Drawing.Size(256, 33)
+        Me.lblMuted.TabIndex = 11
+        Me.lblMuted.Text = "VOLUME MUTED"
+        Me.lblMuted.TextAlign = System.Drawing.ContentAlignment.TopRight
+        Me.lblMuted.Visible = False
+        '
+        'lblMVolume
+        '
+        Me.lblMVolume.BackColor = System.Drawing.Color.Black
+        Me.lblMVolume.Font = New System.Drawing.Font("Segoe UI", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.lblMVolume.ForeColor = System.Drawing.Color.Lime
+        Me.lblMVolume.Location = New System.Drawing.Point(3, 27)
+        Me.lblMVolume.Name = "lblMVolume"
+        Me.lblMVolume.Size = New System.Drawing.Size(256, 33)
+        Me.lblMVolume.TabIndex = 2
+        Me.lblMVolume.Text = "VOLUME 000%"
+        Me.lblMVolume.TextAlign = System.Drawing.ContentAlignment.TopRight
         '
         'btnpwer
         '
@@ -233,6 +252,7 @@ Partial Class Form1
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
         Me.Text = "VSX Remote"
+        Me.TopMost = True
         Me.TransparencyKey = System.Drawing.Color.Fuchsia
         Me.NotifyIcon1Menu.ResumeLayout(False)
         Me.CustomTheme1.ResumeLayout(False)
@@ -253,5 +273,7 @@ Partial Class Form1
     Friend WithEvents ExitApplication As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents lblMuted As System.Windows.Forms.Label
     Friend WithEvents btnMute As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents lblPowerOff As System.Windows.Forms.Label
+    Friend WithEvents Timer1 As System.Windows.Forms.Timer
 
 End Class
