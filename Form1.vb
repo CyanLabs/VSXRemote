@@ -65,7 +65,6 @@ Public Class Form1
 
         'updates volume, mute, power status etc.
         PollInfo()
-
     End Sub
     Private Sub PollInfo()
         'checks if device is powered on or not
@@ -75,7 +74,7 @@ Public Class Form1
         Dim tempresult As String = SendCommands("?f", "FN").ToString.Replace("FN", "")
         lblMainInput.Text = SendCommands("?RGB" & tempresult).ToString.Replace("RGB" & tempresult & "1", "")
 
-
+        'sets volume label and trackbar to correct volume
         Dim tempvalue As String = SendCommands("?v", "VOL", ).ToString.Replace("VOL", "").TrimStart("0"c)
         If tempvalue = "" Then tempvalue = 0
         Dim percent As Integer = (tempvalue / 185) * 100
@@ -91,7 +90,6 @@ Public Class Form1
         End If
     End Sub
     Private Function ConnectToVSX(ByVal ip() As Byte, ByVal Port As String)
-
         'If socket is already connected skips connecting and returns true
         If tnSocket.Connected Then Return True
 
@@ -99,12 +97,6 @@ Public Class Form1
         ep = New IPEndPoint(New IPAddress(ip), CType(Port.Trim, Integer))
         Try
             tnSocket.Connect(ep)
-        Catch oEX As SocketException
-            Return False
-        End Try
-
-        'Confirms we are connected
-        Try
             If tnSocket.Connected Then
                 Return True
             Else
@@ -176,7 +168,6 @@ Public Class Form1
             SendCommands("0" & volume & "VL", "VL")
         Else
             SendCommands(volume & "VL", "VL")
-
         End If
     End Sub
 
@@ -199,7 +190,6 @@ Public Class Form1
                 lblPowerOff.Visible = False
                 Return True
             End If
-
         Else
 
             'if status is off and if parameter pwron is set to true then turns system on and sets GUI to represent this
@@ -231,7 +221,12 @@ Public Class Form1
 
     Private Sub Form1_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
         'Properly disconnect and close the socket
-        tnSocket.Close()
+        Try
+            tnSocket.Disconnect(False)
+            tnSocket.Close()
+        Catch ex As Exception
+            'do stuff soon
+        End Try
     End Sub
 
     Private Sub btnPwr_Click(sender As Object, e As EventArgs) Handles btnPwr.Click
@@ -277,6 +272,7 @@ Public Class Form1
             Threading.Thread.Sleep(25)
         Next counter
         Me.ShowInTaskbar = False
+        Timer1.Stop()
     End Sub
 
     Private Sub ExitApplication_Click(sender As Object, e As EventArgs) Handles ExitApplication.Click
