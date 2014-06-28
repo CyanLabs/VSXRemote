@@ -15,6 +15,9 @@ Public Class Form1
     End Class
 
     Private Sub ScanIP(ByVal e As ScannerArgs)
+
+        'basically builds a ip from the IP bytes then tries to connect to the IP:8102 and if successful assumes it is a pioneer device
+        'TODO - Implement SSDP request instead of this bad method to find the AVR.
         Dim tmpClient As New TcpClient()
         Try
             Dim bytes As Byte() = e.IPAddress.GetAddressBytes()
@@ -99,7 +102,7 @@ Public Class Form1
         End Try
     End Function
 
-    Private Function SendCommands(ByVal cmd As String, Optional ByVal bypasscheck As Boolean = False, Optional ByVal pwron As Boolean = True, Optional ByVal amount As Integer = 1, Optional ByVal expectedresult As String = "")
+    Private Function SendCommands(ByVal cmd As String, Optional ByVal amount As Integer = 1, Optional ByVal expectedresult As String = "")
         'Checks if connected if not connects
         If ConnectToVSX(serverIp, "8102") = True Then
             Dim output As String = ""
@@ -210,13 +213,13 @@ Public Class Form1
 
     Private Sub btnMVolumeDown_Click(sender As Object, e As EventArgs) Handles btnMVolumeDown.Click
         'sends 10 volume down commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim percent As Integer = (SendCommands("VD", False, False, 10, "VOL").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
+        Dim percent As Integer = (SendCommands("VD", 10, "VOL").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
         lblMVolume.Text = "VOLUME " & percent & "%"
     End Sub
 
     Private Sub btnMVolumeUp_Click(sender As Object, e As EventArgs) Handles btnMVolumeUp.Click
         'sends 10 volume up commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim percent As Integer = (SendCommands("VU", False, False, 10, "VOL").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
+        Dim percent As Integer = (SendCommands("VU", 10, "VOL").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
         lblMVolume.Text = "VOLUME " & percent & "%"
     End Sub
 
