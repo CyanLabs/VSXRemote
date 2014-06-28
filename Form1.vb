@@ -15,7 +15,6 @@ Public Class Form1
     End Class
 
     Private Sub ScanIP(ByVal e As ScannerArgs)
-
         'basically builds a ip from the IP bytes then tries to connect to the IP:8102 and if successful assumes it is a pioneer device
         'TODO - Implement SSDP request instead of this bad method to find the AVR.
         Dim tmpClient As New TcpClient()
@@ -36,7 +35,6 @@ Public Class Form1
         End Try
     End Sub
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         'Sets Form to bottom right corner, Mkaes invisible and hides from taskbar
         Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
         ' Me.Opacity = 0
@@ -64,8 +62,22 @@ Public Class Form1
             MsgBox("No Pioneer AVR Detected, You will be able to manually config the application in a future release")
             Application.Exit()
         End Try
+
+        PollInfo()
+    End Sub
+    Private Sub PollInfo()
         'checks if device is powered on or not
         CheckPwr(False, False)
+
+        'checks input and shows friendly name
+        Dim tempresult As String = SendCommands("?f", "FN").ToString.Replace("FN", "")
+        lblMainInput.Text = SendCommands("?RGB" & tempresult).ToString.Replace("RGB" & tempresult & "1", "")
+
+
+        Dim tempvalue As String = SendCommands("?v", "VOL", ).ToString.Replace("VOL", "").TrimStart("0"c)
+        Dim percent As Integer = (tempvalue / 185) * 100
+        lblMVolume.Text = percent & "%"
+        SliderMVolume.Value = tempvalue
 
         'checks if device is muted to show correct text/graphics
         If CheckMute() Then
@@ -75,7 +87,6 @@ Public Class Form1
             lblMuted.Visible = True
         End If
     End Sub
-
     Private Function ConnectToVSX(ByVal ip() As Byte, ByVal Port As String)
 
         'If socket is already connected skips connecting and returns true
@@ -164,7 +175,7 @@ Public Class Form1
                 btnPwr.SideColor = CustomSideButton._Color.Green
                 lblPowerOff.Visible = False
                 Dim percent As Integer = (SendCommands("?v").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
-                lblMVolume.Text = "VOLUME " & percent & "%"
+                lblMVolume.Text = percent & "%"
                 Return True
             End If
 
@@ -177,7 +188,7 @@ Public Class Form1
                 lblPowerOff.Visible = False
                 btnPwr.SideColor = CustomSideButton._Color.Green
                 Dim percent As Integer = (SendCommands("?v").ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
-                lblMVolume.Text = "VOLUME " & percent & "%"
+                lblMVolume.Text = percent & "%"
                 Return True
 
                 'if status is on and if parameter pwron is set to false then just sets GUI to represent this
@@ -201,7 +212,6 @@ Public Class Form1
 
     Private Sub Form1_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
         'Properly disconnect and close the socket
-        tnSocket.Disconnect(False)
         tnSocket.Close()
     End Sub
 
@@ -212,18 +222,23 @@ Public Class Form1
 
     Private Sub btnMVolumeDown_Click(sender As Object, e As EventArgs) Handles btnMVolumeDown.Click
         'sends 10 volume down commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim percent As Integer = (SendCommands("VD", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
-        lblMVolume.Text = "VOLUME " & percent & "%"
+        Dim tempvalue As String = SendCommands("VD", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c)
+        Dim percent As Integer = (tempvalue / 185) * 100
+        lblMVolume.Text = percent & "%"
+        SliderMVolume.Value = tempvalue
     End Sub
 
     Private Sub btnMVolumeUp_Click(sender As Object, e As EventArgs) Handles btnMVolumeUp.Click
         'sends 10 volume up commands and then mathematically works out a percent from current volume and sets GUI to match
-        Dim percent As Integer = (SendCommands("VU", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c) / 185) * 100
-        lblMVolume.Text = "VOLUME " & percent & "%"
+        Dim tempvalue As String = SendCommands("VU", "VOL", 10).ToString.Replace("VOL", "").TrimStart("0"c)
+        Dim percent As Integer = (tempvalue / 185) * 100
+        lblMVolume.Text = percent & "%"
+        SliderMVolume.Value = tempvalue
     End Sub
 
     Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs) Handles NotifyIcon1.DoubleClick, ShowInterface.Click
         'Show form and show in taskbar when notification icon double clicked or showinterface menu option clicked
+        PollInfo()
         Me.WindowState = FormWindowState.Normal
         Me.Opacity = 1
         Me.ShowInTaskbar = True
@@ -262,9 +277,11 @@ Public Class Form1
     End Sub
 
     Private Sub SliderMVolume_Scroll(sender As Object) Handles SliderMVolume.Scroll
+        
+    End Sub
+    Private Sub SliderMVolume_MouseUp(sender As Object, e As MouseEventArgs) Handles SliderMVolume.MouseUp
         'Sets volume level to the value of the slider and create a percentage variable for use in the GUI
         Dim percent As Integer = (SliderMVolume.Value / 185) * 100
-
         'if value is less than 10 pre-fix 2 "0"s else if less than 100 pre-fix 1 "0" else just send the command without added "0"s
         If SliderMVolume.Value < 10 Then
             SendCommands("00" & SliderMVolume.Value.ToString & "VL", "VL")
@@ -273,6 +290,6 @@ Public Class Form1
         Else
             SendCommands(SliderMVolume.Value.ToString & "VL", "VL")
         End If
-        lblMVolume.Text = "VOLUME " & percent & "%"
+        lblMVolume.Text = percent & "%"
     End Sub
 End Class
