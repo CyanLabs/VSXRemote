@@ -1,6 +1,7 @@
 ﻿Imports System.Net.Sockets
 Imports System.Net
 Imports System.Text
+Imports System.Runtime.InteropServices
 
 Public Class Form1
     'various variables
@@ -65,6 +66,8 @@ Public Class Form1
 
         'updates volume, mute, power status etc.
         PollInfo()
+
+        Timer1.Start()
     End Sub
     Private Sub PollInfo()
         'checks if device is powered on or not
@@ -302,15 +305,30 @@ Public Class Form1
         lblMVolume.Text = percent & "%"
     End Sub
 
-    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
-        'checks if mouse is over form or not, if not fades form away after 5 seconds. (configurable soon)
-        If Not Control.MousePosition.X > Me.Location.X And Control.MousePosition.X < Me.Location.X + Width And Control.MousePosition.Y > Location.Y And Control.MousePosition.Y < Location.Y + Height Then
+    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
+        Dim Rectangle = New Rectangle(Me.Location.X, Me.Location.Y, Me.Width, Me.Height)
+        Dim pt As POINTAPI
+        pt.x = -1
+        pt.y = -1
+        GetCursorPos(pt)
+        If Not Rectangle.Contains(New Point(pt.x, pt.y)) Then
             For counter = 1.1 To 0.0 Step -0.1
                 Me.Opacity = counter
                 Me.Refresh()
                 Threading.Thread.Sleep(25)
             Next counter
+            Me.ShowInTaskbar = False
             Timer1.Stop()
         End If
     End Sub
+
+    <DllImport("User32.dll")>
+    Public Shared Function GetCursorPos(ByRef pt As POINTAPI) As Integer
+    End Function
+
+    <StructLayout(LayoutKind.Sequential)>
+    Public Structure POINTAPI
+        Public x As Integer
+        Public y As Integer
+    End Structure
 End Class
