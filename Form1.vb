@@ -63,9 +63,9 @@ Public Class Form1
             Application.Exit()
         End Try
 
+        'updates volume, mute, power status etc.
         PollInfo()
 
-        Timer1.Start()
     End Sub
     Private Sub PollInfo()
         'checks if device is powered on or not
@@ -241,6 +241,7 @@ Public Class Form1
     End Sub
 
     Private Sub btnMVolumeDown_Click(sender As Object, e As EventArgs) Handles btnMVolumeDown.Click
+        'sets volume level to current level - 10 and updates GUI
         Dim tempresult As String = SendCommands("?v", "VOL").ToString.Replace("VOL", "").TrimStart("0"c)
         tempresult = tempresult - 10
         ValidateVolume(tempresult)
@@ -250,6 +251,7 @@ Public Class Form1
     End Sub
 
     Private Sub btnMVolumeUp_Click(sender As Object, e As EventArgs) Handles btnMVolumeUp.Click
+        'sets volume level to current level + 10 and updates GUI
         Dim tempresult As String = SendCommands("?v", "VOL").ToString.Replace("VOL", "").TrimStart("0"c)
         tempresult = tempresult + 10
         ValidateVolume(tempresult)
@@ -259,7 +261,7 @@ Public Class Form1
     End Sub
 
     Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs) Handles NotifyIcon1.DoubleClick, ShowInterface.Click
-        'Show form and show in taskbar when notification icon double clicked or showinterface menu option clicked
+        'Show form and show in taskbar when notification icon double clicked or showinterface menu option clicked and update information
         PollInfo()
         Me.WindowState = FormWindowState.Normal
         Me.Opacity = 1
@@ -274,7 +276,6 @@ Public Class Form1
             Me.Refresh()
             Threading.Thread.Sleep(25)
         Next counter
-        Me.WindowState = FormWindowState.Minimized
         Me.ShowInTaskbar = False
     End Sub
 
@@ -306,6 +307,7 @@ Public Class Form1
     End Sub
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        'checks if mouse is over form or not, if not fades form away after 5 seconds. (configurable soon)
         If Not Control.MousePosition.X > Me.Location.X And Control.MousePosition.X < Me.Location.X + Width And Control.MousePosition.Y > Location.Y And Control.MousePosition.Y < Location.Y + Height Then
             For counter = 1.1 To 0.0 Step -0.1
                 Me.Opacity = counter
@@ -314,10 +316,5 @@ Public Class Form1
             Next counter
             Timer1.Stop()
         End If
-    End Sub
-
-    Private Sub SliderMVolume_Scroll(sender As Object) Handles SliderMVolume.Scroll
-
-
     End Sub
 End Class
