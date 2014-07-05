@@ -59,14 +59,28 @@ Public Class Form1
         Next
 
         'Check PollInfo Sub.
+
+
+        lblOSD.Font = CustomFont.GetInstance(lblOSD.Font.Size, FontStyle.Regular)
+        lblMainInput.Font = CustomFont.GetInstance(lblMainInput.Font.Size, FontStyle.Regular)
+        lblMVolume.Font = CustomFont.GetInstance(lblMVolume.Font.Size, FontStyle.Regular)
+        Me.NsComboBox1.DisplayMember = "Key"
+        Me.NsComboBox1.ValueMember = "Value"
+
+        'Get input names.
+        For i As Integer = 0 To 60
+            If i < 10 Then
+                SendCommands("?RGB0" & i)
+            Else
+                SendCommands("?RGB" & i)
+            End If
+        Next
+
         PollInfo()
 
         'Starts OSD thread and injects LCD font.
         CheckScreen.IsBackground = True
         CheckScreen.Start()
-        lblOSD.Font = CustomFont.GetInstance(lblOSD.Font.Size, FontStyle.Regular)
-        lblMainInput.Font = CustomFont.GetInstance(lblMainInput.Font.Size, FontStyle.Regular)
-        lblMVolume.Font = CustomFont.GetInstance(lblMVolume.Font.Size, FontStyle.Regular)
         If autohide Then Timer1.Start()
     End Sub
 
@@ -75,7 +89,9 @@ Public Class Form1
         SendCommands("?f")
         SendCommands("?m")
         SendCommands("VU")
+        SendCommands("VD")
         SendCommands("?p")
+
     End Sub
 
     'Connects to VSX if not already.
@@ -187,7 +203,7 @@ Public Class Form1
 
     'Hides form if mouse is not over form for 3 seconds.
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
-        Dim Rectangle = New Rectangle(Me.Location.X, Me.Location.Y, Me.Width, Me.Height)
+        Dim Rectangle = New Rectangle(Me.Location.X, Me.Location.Y, Me.Width, Screen.PrimaryScreen.WorkingArea.Height)
         Dim pt As POINTAPI
         GetCursorPos(pt)
         If Not Rectangle.Contains(New Point(pt.x, pt.y)) Then
@@ -247,6 +263,7 @@ Public Class Form1
                 ParseScreen(i)
             Next
             'Repeats sub
+            Threading.Thread.Sleep(1000)
             UpdateScreen()
         End If
     End Sub
@@ -268,66 +285,126 @@ Public Class Form1
 
     'A Sub to seperate the output in to various sections and respond appropiately.
     Sub ParseScreen(output As String)
-        'SCREEN INFORMATION
-        If output.ToString.Contains("FL") Then
-            Dim decryptedOSD As String = DecryptScreen(output)
-            If decryptedOSD.ToString.Contains("M.VOL") Then
-                lblMVolume.Text = decryptedOSD.ToString.Replace("M.VOL", "").Replace(" ", "")
-                lblMVolume.ForeColor = Color.Lime
-                btnMute.Text = "  MUTE"
-                btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
-            ElseIf decryptedOSD.ToString.Contains("MUTE ") Then
-                If decryptedOSD.ToString.Contains("MUTE ON") Then
-                    lblMVolume.ForeColor = Color.Red
-                    btnMute.Text = "UN-MUTE"
-                    btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.Muted
-                ElseIf decryptedOSD.ToString.Contains("MUTE OFF") Then
+        Try
+            'SCREEN INFORMATION
+            output = output.Replace(vbLf, "").Replace(vbCrLf, "")
+            If output.ToString.Contains("FL0") Then
+                Dim TempScreen = output
+                Dim decryptedOSD As String = DecryptScreen(TempScreen)
+                If decryptedOSD.ToString.Contains("M.VOL") Then
+                    lblMVolume.Text = decryptedOSD.ToString.Replace("M.VOL", "").Replace(" ", "")
                     lblMVolume.ForeColor = Color.Lime
                     btnMute.Text = "  MUTE"
                     btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
+                ElseIf decryptedOSD.ToString.Contains("MUTE ") Then
+                    If decryptedOSD.ToString.Contains("MUTE ON") Then
+                        lblMVolume.ForeColor = Color.Red
+                        btnMute.Text = "UN-MUTE"
+                        btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.Muted
+                    ElseIf decryptedOSD.ToString.Contains("MUTE OFF") Then
+                        lblMVolume.ForeColor = Color.Lime
+                        btnMute.Text = "  MUTE"
+                        btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
+                    End If
+                End If
+                lblOSD.Text = decryptedOSD
+            End If
+
+            'POWER INFORMATION
+            If output.ToString.Contains("PWR0") Then
+                btnPwr.Text = " ON"
+                btnPwr.SideColor = CustomSideButton._Color.Green
+                If preventpowertoggle = False Then SendCommands("PZ")
+                preventpowertoggle = True
+            End If
+            If output.ToString.Contains("PWR1") Then
+                btnPwr.Text = "OFF"
+                btnPwr.SideColor = CustomSideButton._Color.Red
+                If preventpowertoggle = False Then SendCommands("PZ")
+                preventpowertoggle = True
+            End If
+
+            'INPUT INFORMATION (MAIN)
+            If output.ToString.Contains("FN") Then
+                Dim TempInput = output.ToString.Remove(0, 2)
+                NsComboBox1.SelectedValue = Convert.ToInt32(TempInput)
+                SendCommands("?RGB" & TempInput)
+            End If
+
+            'VOLUME INFORMATION (MAIN)
+            If output.ToString.Contains("VOL") Then
+                Dim TempVol = output
+                If TempVol.ToString = "VOL000" Then
+                    SliderMVolume.Value = 0
+                Else
+                    Dim volume As Integer = TempVol.Replace("VOL", "").TrimStart("0"c)
+                    SliderMVolume.Value = volume
+                End If
+
+            End If
+
+            'INPUT NAME INFORMATION
+            If output.ToString.Contains("RGB") Then
+                Dim TempInputName = output
+                lblMainInput.Text = TempInputName.ToString.Remove(0, 6)
+                If dictionary.TryGetValue(TempInputName.ToString.Remove(0, 6), TempInputName.ToString.Substring(3, 2)) = False AndAlso TempInputName.Length < 24 Then
+                    dictionary.Add(TempInputName.ToString.Remove(0, 6), TempInputName.ToString.Substring(3, 2))
+                    NsComboBox1.DataSource = New BindingSource(dictionary, Nothing)
                 End If
             End If
-            lblOSD.Text = decryptedOSD
-        End If
-
-        'POWER INFORMATION
-        If output.ToString.Contains("PWR0") Then
-            btnPwr.Text = " ON"
-            btnPwr.SideColor = CustomSideButton._Color.Green
-            If preventpowertoggle = False Then SendCommands("PZ")
-            preventpowertoggle = True
-        End If
-        If output.ToString.Contains("PWR1") Then
-            btnPwr.Text = "OFF"
-            btnPwr.SideColor = CustomSideButton._Color.Red
-            If preventpowertoggle = False Then SendCommands("PZ")
-            preventpowertoggle = True
-        End If
-
-        'INPUT INFORMATION (MAIN)
-        If output.ToString.Contains("FN") Then
-            SendCommands("?RGB" & output.ToString.Remove(0, 2))
-        End If
-
-        'VOLUME INFORMATION (MAIN)
-        If output.ToString.Contains("VOL") Then
-            If output.ToString = "VOL000" Then
-                SliderMVolume.Value = 0
-            Else
-                Dim volume As Integer = output.Replace("VOL", "").TrimStart("0"c)
-                SliderMVolume.Value = volume
-            End If
-           
-        End If
-
-        'INPUT NAME INFORMATION
-        If output.ToString.Contains("RGB") Then
-            lblMainInput.Text = output.ToString.Remove(0, 6)
-        End If
-
+            Debug.WriteLine("RESPONSE: " & output.ToString)
+        Catch
+        End Try
     End Sub
+    Dim dictionary As New Dictionary(Of String, Integer)
     Private Sub SliderMVolume_MouseUp(sender As Object, e As MouseEventArgs) Handles SliderMVolume.MouseUp
         'Set volume of AVR to value of slider on mouse release.
         ValidateVolume(SliderMVolume.Value)
+    End Sub
+
+    Private Sub btnMainZone_Click(sender As Object, e As EventArgs) Handles btnMainZone.Click
+        tabControls.SelectedIndex = 1
+        If Me.Height = 500 Then
+            Me.Height = 160
+            sepAdvanced.Visible = False
+            btnMainZone.SideColor = CustomSideButton._Color.Yellow
+        Else
+            Me.Height = 500
+            sepAdvanced.Visible = True
+            btnMainZone.SideColor = CustomSideButton._Color.Green
+        End If
+        Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
+    End Sub
+
+    Private Sub btnHDZone_Click(sender As Object, e As EventArgs) Handles btnHDZone.Click
+        tabControls.SelectedIndex = 2
+        If Me.Height = 500 Then
+            Me.Height = 160
+            sepAdvanced.Visible = False
+            btnHDZone.SideColor = CustomSideButton._Color.Yellow
+        Else
+            Me.Height = 500
+            sepAdvanced.Visible = True
+            btnHDZone.SideColor = CustomSideButton._Color.Green
+        End If
+        Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
+    End Sub
+
+    Private Sub btnZone2_Click(sender As Object, e As EventArgs) Handles btnHDZone.Click
+        tabControls.SelectedIndex = 2
+        If Me.Height = 500 Then
+            Me.Height = 160
+            sepAdvanced.Visible = False
+            btnZone2.SideColor = CustomSideButton._Color.Yellow
+        Else
+            Me.Height = 500
+            sepAdvanced.Visible = True
+            btnZone2.SideColor = CustomSideButton._Color.Green
+        End If
+        Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
+    End Sub
+
+    Private Sub NsComboBox1_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles NsComboBox1.SelectionChangeCommitted
+        SendCommands(NsComboBox1.SelectedItem.value & "FN")
     End Sub
 End Class

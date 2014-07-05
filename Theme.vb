@@ -2891,18 +2891,18 @@ Class NSTabControl
 
         ItemHeight = ItemSize.Height + 2
 
-        GP1 = CreateRound(0, 0, ItemHeight + 3, Height - 1, 7)
-        GP2 = CreateRound(1, 1, ItemHeight + 3, Height - 3, 7)
+        'GP1 = CreateRound(0, 0, ItemHeight + 3, Height - 1, 7)
+        'GP2 = CreateRound(1, 1, ItemHeight + 3, Height - 3, 7)
 
-        PB1 = New PathGradientBrush(GP1)
-        PB1.CenterColor = Color.FromArgb(50, 50, 50)
-        PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
-        PB1.FocusScales = New PointF(0.8F, 0.95F)
+        'PB1 = New PathGradientBrush(GP1)
+        'PB1.CenterColor = Color.FromArgb(50, 50, 50)
+        'PB1.SurroundColors = {Color.FromArgb(45, 45, 45)}
+        'PB1.FocusScales = New PointF(0.8F, 0.95F)
 
-        G.FillPath(PB1, GP1)
+        'G.FillPath(PB1, GP1)
 
-        G.DrawPath(P1, GP1)
-        G.DrawPath(P2, GP2)
+        'G.DrawPath(P1, GP1)
+        'G.DrawPath(P2, GP2)
 
         For I As Integer = 0 To TabCount - 1
             R1 = GetTabRect(I)
@@ -2952,11 +2952,11 @@ Class NSTabControl
             G.DrawString(TP1.Text, Font, Brushes.White, R1, SF1)
         Next
 
-        GP3 = CreateRound(ItemHeight, 0, Width - ItemHeight - 1, Height - 1, 7)
-        GP4 = CreateRound(ItemHeight + 1, 1, Width - ItemHeight - 3, Height - 3, 7)
+        'GP3 = CreateRound(ItemHeight, 0, Width - ItemHeight - 1, Height - 1, 7)
+        'GP4 = CreateRound(ItemHeight + 1, 1, Width - ItemHeight - 3, Height - 3, 7)
 
-        G.DrawPath(P2, GP3)
-        G.DrawPath(P1, GP4)
+        'G.DrawPath(P2, GP3)
+        ' G.DrawPath(P1, GP4)
     End Sub
 
 End Class
@@ -3599,52 +3599,16 @@ Class CustomButton
         If State = MouseState.Down Then
             DrawGradient(TopGradientClick, BotGradientClick, New Rectangle(2, 1, Width - 4, Height - 3), 90.0F)
             G.DrawRectangle(InnerBorderClick, 1, 1, ClientRectangle.Width - 3, ClientRectangle.Height - 3)
-            'TOPLEFT
-            DrawPixel(OuterBorderClick.Color, 1, 1)
-            DrawPixel(InnerBorderClick.Color, 2, 2)
-            'TOPRIGHT
-            DrawPixel(OuterBorderClick.Color, Width - 2, 1)
-            DrawPixel(InnerBorderClick.Color, Width - 3, 2)
-            'BOTTOMLEFT
-            DrawPixel(OuterBorderClick.Color, 1, Height - 2)
-            DrawPixel(InnerBorderClick.Color, 1, Height - 3)
-            'BOTTOMRIGHT
-            DrawPixel(OuterBorderClick.Color, Width - 2, Height - 2)
-            DrawPixel(InnerBorderClick.Color, Width - 3, Height - 3)
             DrawBorders(OuterBorderClick)
         Else
             DrawGradient(TopGradient, BotGradient, New Rectangle(2, 1, Width - 4, Height - 3), 90.0F)
             G.DrawRectangle(InnerBorder, 1, 1, ClientRectangle.Width - 3, ClientRectangle.Height - 3)
-            'TOPLEFT
-            DrawPixel(OuterBorder.Color, 1, 1)
-            DrawPixel(InnerBorder.Color, 2, 2)
-            'TOPRIGHT
-            DrawPixel(OuterBorder.Color, Width - 2, 1)
-            DrawPixel(InnerBorder.Color, Width - 3, 2)
-            'BOTTOMLEFT
-            DrawPixel(OuterBorder.Color, 1, Height - 2)
-            DrawPixel(InnerBorder.Color, 1, Height - 3)
-            'BOTTOMRIGHT
-            DrawPixel(OuterBorder.Color, Width - 2, Height - 2)
-            DrawPixel(InnerBorder.Color, Width - 3, Height - 3)
             DrawBorders(OuterBorder)
         End If
 
         If State = MouseState.Over Then
             DrawGradient(TopGradientHover, BotGradientHover, New Rectangle(2, 1, Width - 4, Height - 3), 90.0F)
             G.DrawRectangle(InnerBorderHover, 1, 1, ClientRectangle.Width - 3, ClientRectangle.Height - 3)
-            'TOPLEFT
-            DrawPixel(OuterBorderHover.Color, 1, 1)
-            DrawPixel(InnerBorderHover.Color, 2, 2)
-            'TOPRIGHT
-            DrawPixel(OuterBorderHover.Color, Width - 2, 1)
-            DrawPixel(InnerBorderHover.Color, Width - 3, 2)
-            'BOTTOMLEFT
-            DrawPixel(OuterBorderHover.Color, 1, Height - 2)
-            DrawPixel(InnerBorderHover.Color, 1, Height - 3)
-            'BOTTOMRIGHT
-            DrawPixel(OuterBorderHover.Color, Width - 2, Height - 2)
-            DrawPixel(InnerBorderHover.Color, Width - 3, Height - 3)
             DrawBorders(OuterBorderHover)
         End If
 
@@ -3789,42 +3753,6 @@ Class CustomSideButton
             G.DrawRectangle(InnerBorderGray, New Rectangle(24, 1, Width - 26, Height - 3))
         End If
         DrawBorders(OuterBorder)
-        '---TOPLEFT---
-
-        If _Col = _Color.Green Then
-            DrawPixel(ExtraPixelGreen, 1, 2)
-            DrawPixel(ExtraPixelGreen, 2, 1)
-            DrawPixel(InnerBorderGreen.Color, 2, 2)
-        ElseIf _Col = _Color.Yellow Then
-            DrawPixel(ExtraPixelYellow, 1, 2)
-            DrawPixel(ExtraPixelYellow, 2, 1)
-            DrawPixel(InnerBorderYellow.Color, 2, 2)
-        Else
-            DrawPixel(ExtraPixelRed, 1, 2)
-            DrawPixel(ExtraPixelRed, 2, 1)
-            DrawPixel(InnerBorderRed.Color, 2, 2)
-        End If
-        DrawPixel(OuterBorder.Color, 1, 1)
-        '---BOTLEFT---
-        DrawPixel(Color.FromArgb(51, 51, 51), 0, Height - 1)
-        DrawPixel(Color.FromArgb(51, 51, 51), 1, Height - 1)
-        DrawPixel(Color.FromArgb(51, 51, 51), 0, Height - 2)
-
-        If _Col = _Color.Green Then
-            DrawPixel(InnerBorderGreen.Color, 2, Height - 3)
-            DrawPixel(ExtraPixelGreen, 1, Height - 3)
-            DrawPixel(ExtraPixelGreen, 2, Height - 2)
-        ElseIf _Col = _Color.Yellow Then
-            DrawPixel(InnerBorderYellow.Color, 2, Height - 3)
-            DrawPixel(ExtraPixelYellow, 1, Height - 3)
-            DrawPixel(ExtraPixelYellow, 2, Height - 2)
-        Else
-            DrawPixel(InnerBorderRed.Color, 2, Height - 3)
-            DrawPixel(ExtraPixelRed, 1, Height - 3)
-            DrawPixel(ExtraPixelRed, 2, Height - 2)
-        End If
-        DrawPixel(OuterBorder.Color, 1, Height - 2)
-
         '---ICON---
         If DisplayIcon = _Icon.Square Then
             DrawGradient(SquareColor, SquareColor, New Rectangle(7, 9, 5, 5))
@@ -3851,6 +3779,7 @@ Class CustomSideButton
         DrawPixel(Color.FromArgb(51, 51, 51), 0, Height - 1)
         DrawPixel(Color.FromArgb(51, 51, 51), 1, Height - 1)
         DrawPixel(Color.FromArgb(51, 51, 51), 0, Height - 2)
+        DrawBorders(OuterBorder)
 
     End Sub
 End Class
