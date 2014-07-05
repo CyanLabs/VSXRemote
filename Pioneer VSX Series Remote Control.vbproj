@@ -121,7 +121,6 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <EmbeddedResource Include="Resources\LCD-Solid.ttf" />
-    <None Include="Resources\test.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="1403983655_51856.ico" />

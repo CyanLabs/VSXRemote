@@ -116,13 +116,9 @@ Public Class Form1
     'Quick sub to parse volume and remove/add needed amount of zero's.
     Private Sub ValidateVolume(volume As String)
         'if value is less than 10 pre-fix 2 "0"s else if less than 100 pre-fix 1 "0" else just send the command without added "0"s
-        If volume <= 0 Then
-            volume = 0
-            SendCommands(volume & "VL")
-        ElseIf volume >= 185 Then
-            volume = 185
-            SendCommands(volume & "VL")
-        ElseIf volume = 0 Then
+        If volume >= 185 Then
+            SendCommands("185VL")
+        ElseIf volume <= 0 Then
             SendCommands("000VL")
         ElseIf volume < 10 Then
             SendCommands("00" & volume & "VL")
@@ -315,8 +311,13 @@ Public Class Form1
 
         'VOLUME INFORMATION (MAIN)
         If output.ToString.Contains("VOL") Then
-            Dim volume As Integer = output.Replace("VOL", "").TrimStart("0"c)
-            SliderMVolume.Value = volume
+            If output.ToString = "VOL000" Then
+                SliderMVolume.Value = 0
+            Else
+                Dim volume As Integer = output.Replace("VOL", "").TrimStart("0"c)
+                SliderMVolume.Value = volume
+            End If
+           
         End If
 
         'INPUT NAME INFORMATION
