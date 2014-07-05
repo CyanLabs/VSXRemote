@@ -124,4 +124,7 @@
   <data name="Muted" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Muted.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="LCD_Solid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LCD-Solid.ttf;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
