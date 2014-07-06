@@ -72,7 +72,8 @@ Public Class Form1
         cmbMainInputs.ValueMember = "Value"
 
         Do While serverIp Is Nothing
-            NotifyIcon1.ShowBalloonTip(5000, "VSX Remote", "Searching for device, Please wait!", ToolTipIcon.Warning)
+            MsgBox("No VSX found, Closing application!" & vbNewLine & vbNewLine & "Manual configuration coming soon", MsgBoxStyle.Critical, "VSX Remote")
+            Application.Exit()
         Loop
         NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Connected to " & New IPAddress(serverIp).ToString, ToolTipIcon.Info)
         If ConnectToVSX(serverIp, "8102") = True Then
@@ -329,6 +330,10 @@ Public Class Form1
             If output.ToString.Contains("FN") Then
                 Dim TempInput = output.ToString.Remove(0, 2)
                 cmbMainInputs.SelectedValue = Convert.ToInt32(TempInput)
+                btnMainInputPrev.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
+                btnMainInputPrev.Tag = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).value.ToString
+                btnMainInputNext.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex + 1).key.ToString & " (NEXT)"
+                btnMainInputNext.Tag = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex + 1).value.ToString
                 SendCommands("?RGB" & TempInput)
             End If
 
@@ -372,9 +377,9 @@ Public Class Form1
         btnZone2.SideColor = CustomSideButton._Color.Yellow
 
         If Me.Height = 500 And color = CustomSideButton._Color.Green Then
-            Me.Height = 160
+            Me.Height = 200
             sepAdvanced.Visible = False
-        ElseIf color = CustomSideButton._Color.Yellow OrElse Me.Height = 160 Then
+        ElseIf color = CustomSideButton._Color.Yellow OrElse Me.Height = 200 Then
             Me.Height = 500
             sepAdvanced.Visible = True
             sender.sidecolor = CustomSideButton._Color.Green
@@ -400,5 +405,21 @@ Public Class Form1
             Me.ShowInTaskbar = True
             If autohide Then Timer1.Start()
         End If
+    End Sub
+
+    Private Sub btnMainInputCycle_Click(sender As Object, e As EventArgs) Handles btnMainInputNext.Click, btnMainInputPrev.Click
+        SendCommands(sender.tag & "FN")
+    End Sub
+
+    Private Sub btnMainInputPrev_Click(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub btnMainInputNext_Click(sender As Object, e As EventArgs)
+
+    End Sub
+
+    Private Sub CustomTheme1_Click(sender As Object, e As EventArgs) Handles CustomTheme1.Click
+
     End Sub
 End Class

@@ -31,9 +31,19 @@ Partial Class Form1
         Me.ExitApplication = New System.Windows.Forms.ToolStripMenuItem()
         Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.CustomTheme1 = New Pioneer_VSX_Series_Remote_Control.CustomTheme()
+        Me.CustomSideButton7 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.CustomSideButton6 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.CustomSideButton5 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.tabControls = New Pioneer_VSX_Series_Remote_Control.NSTabControl()
         Me.tabMainZone = New System.Windows.Forms.TabPage()
+        Me.NsGroupBox1 = New Pioneer_VSX_Series_Remote_Control.NSGroupBox()
+        Me.CustomSideButton4 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.CustomSideButton2 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.CustomSideButton3 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.CustomSideButton1 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.cmbMainInputs = New Pioneer_VSX_Series_Remote_Control.NSComboBox()
+        Me.btnMainInputNext = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnMainInputPrev = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.tabHDZone = New System.Windows.Forms.TabPage()
         Me.tabZone2 = New System.Windows.Forms.TabPage()
         Me.btnZone2 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
@@ -53,12 +63,12 @@ Partial Class Form1
         Me.CustomMiddleBar1 = New Pioneer_VSX_Series_Remote_Control.CustomMiddleBar()
         Me.NsSeperator1 = New Pioneer_VSX_Series_Remote_Control.NSSeperator()
         Me.sepAdvanced = New Pioneer_VSX_Series_Remote_Control.NSSeperator()
-        Me.CustomMiddleBar2 = New Pioneer_VSX_Series_Remote_Control.CustomMiddleBar()
         Me.btnpwer = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.NotifyIcon1Menu.SuspendLayout()
         Me.CustomTheme1.SuspendLayout()
         Me.tabControls.SuspendLayout()
         Me.tabMainZone.SuspendLayout()
+        Me.NsGroupBox1.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
@@ -103,6 +113,9 @@ Partial Class Form1
         '
         Me.CustomTheme1.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
         Me.CustomTheme1.BorderStyle = System.Windows.Forms.FormBorderStyle.None
+        Me.CustomTheme1.Controls.Add(Me.CustomSideButton7)
+        Me.CustomTheme1.Controls.Add(Me.CustomSideButton6)
+        Me.CustomTheme1.Controls.Add(Me.CustomSideButton5)
         Me.CustomTheme1.Controls.Add(Me.tabControls)
         Me.CustomTheme1.Controls.Add(Me.btnZone2)
         Me.CustomTheme1.Controls.Add(Me.btnHDZone)
@@ -118,7 +131,6 @@ Partial Class Form1
         Me.CustomTheme1.Controls.Add(Me.CustomMiddleBar1)
         Me.CustomTheme1.Controls.Add(Me.NsSeperator1)
         Me.CustomTheme1.Controls.Add(Me.sepAdvanced)
-        Me.CustomTheme1.Controls.Add(Me.CustomMiddleBar2)
         Me.CustomTheme1.Customization = "6Ojo//z8/P/y8vL//////1BQUP//////AAAA////////////lpaW/w=="
         Me.CustomTheme1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.CustomTheme1.Font = New System.Drawing.Font("Verdana", 8.0!)
@@ -128,13 +140,61 @@ Partial Class Form1
         Me.CustomTheme1.Name = "CustomTheme1"
         Me.CustomTheme1.NoRounding = False
         Me.CustomTheme1.Sizable = False
-        Me.CustomTheme1.Size = New System.Drawing.Size(400, 160)
+        Me.CustomTheme1.Size = New System.Drawing.Size(400, 200)
         Me.CustomTheme1.SmartBounds = True
         Me.CustomTheme1.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
         Me.CustomTheme1.TabIndex = 3
         Me.CustomTheme1.Text = "VSX Remote - Pre Release"
         Me.CustomTheme1.TransparencyKey = System.Drawing.Color.Fuchsia
         Me.CustomTheme1.Transparent = False
+        '
+        'CustomSideButton7
+        '
+        Me.CustomSideButton7.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton7.Customization = ""
+        Me.CustomSideButton7.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton7.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CustomSideButton7.Image = Nothing
+        Me.CustomSideButton7.Location = New System.Drawing.Point(270, 164)
+        Me.CustomSideButton7.Name = "CustomSideButton7"
+        Me.CustomSideButton7.NoRounding = True
+        Me.CustomSideButton7.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton7.Size = New System.Drawing.Size(125, 30)
+        Me.CustomSideButton7.TabIndex = 27
+        Me.CustomSideButton7.Text = "SOON!"
+        Me.CustomSideButton7.Transparent = True
+        '
+        'CustomSideButton6
+        '
+        Me.CustomSideButton6.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton6.Customization = ""
+        Me.CustomSideButton6.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton6.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CustomSideButton6.Image = Nothing
+        Me.CustomSideButton6.Location = New System.Drawing.Point(138, 164)
+        Me.CustomSideButton6.Name = "CustomSideButton6"
+        Me.CustomSideButton6.NoRounding = True
+        Me.CustomSideButton6.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton6.Size = New System.Drawing.Size(125, 30)
+        Me.CustomSideButton6.TabIndex = 27
+        Me.CustomSideButton6.Text = "SOON!"
+        Me.CustomSideButton6.Transparent = True
+        '
+        'CustomSideButton5
+        '
+        Me.CustomSideButton5.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton5.Customization = ""
+        Me.CustomSideButton5.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton5.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.CustomSideButton5.Image = Nothing
+        Me.CustomSideButton5.Location = New System.Drawing.Point(6, 164)
+        Me.CustomSideButton5.Name = "CustomSideButton5"
+        Me.CustomSideButton5.NoRounding = True
+        Me.CustomSideButton5.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton5.Size = New System.Drawing.Size(125, 30)
+        Me.CustomSideButton5.TabIndex = 27
+        Me.CustomSideButton5.Text = "SOON!"
+        Me.CustomSideButton5.Transparent = True
         '
         'tabControls
         '
@@ -144,25 +204,108 @@ Partial Class Form1
         Me.tabControls.Controls.Add(Me.tabZone2)
         Me.tabControls.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed
         Me.tabControls.ItemSize = New System.Drawing.Size(0, 1)
-        Me.tabControls.Location = New System.Drawing.Point(3, 158)
+        Me.tabControls.Location = New System.Drawing.Point(3, 203)
         Me.tabControls.MinimumSize = New System.Drawing.Size(0, 1)
         Me.tabControls.Multiline = True
         Me.tabControls.Name = "tabControls"
         Me.tabControls.SelectedIndex = 0
-        Me.tabControls.Size = New System.Drawing.Size(394, 339)
+        Me.tabControls.Size = New System.Drawing.Size(395, 288)
         Me.tabControls.SizeMode = System.Windows.Forms.TabSizeMode.Fixed
         Me.tabControls.TabIndex = 26
         '
         'tabMainZone
         '
         Me.tabMainZone.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
-        Me.tabMainZone.Controls.Add(Me.cmbMainInputs)
+        Me.tabMainZone.Controls.Add(Me.NsGroupBox1)
+        Me.tabMainZone.ForeColor = System.Drawing.Color.White
         Me.tabMainZone.Location = New System.Drawing.Point(5, 4)
         Me.tabMainZone.Name = "tabMainZone"
         Me.tabMainZone.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabMainZone.Size = New System.Drawing.Size(385, 331)
+        Me.tabMainZone.Size = New System.Drawing.Size(386, 280)
         Me.tabMainZone.TabIndex = 0
         Me.tabMainZone.Text = "tabMainZone"
+        '
+        'NsGroupBox1
+        '
+        Me.NsGroupBox1.Controls.Add(Me.CustomSideButton4)
+        Me.NsGroupBox1.Controls.Add(Me.CustomSideButton2)
+        Me.NsGroupBox1.Controls.Add(Me.CustomSideButton3)
+        Me.NsGroupBox1.Controls.Add(Me.CustomSideButton1)
+        Me.NsGroupBox1.Controls.Add(Me.cmbMainInputs)
+        Me.NsGroupBox1.Controls.Add(Me.btnMainInputNext)
+        Me.NsGroupBox1.Controls.Add(Me.btnMainInputPrev)
+        Me.NsGroupBox1.DrawSeperator = True
+        Me.NsGroupBox1.Location = New System.Drawing.Point(0, 6)
+        Me.NsGroupBox1.Name = "NsGroupBox1"
+        Me.NsGroupBox1.Size = New System.Drawing.Size(383, 189)
+        Me.NsGroupBox1.SubTitle = "Select Main Zone input"
+        Me.NsGroupBox1.TabIndex = 3
+        Me.NsGroupBox1.Text = "NsGroupBox1"
+        Me.NsGroupBox1.Title = "Input Select"
+        '
+        'CustomSideButton4
+        '
+        Me.CustomSideButton4.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton4.Customization = ""
+        Me.CustomSideButton4.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton4.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.CustomSideButton4.Image = Nothing
+        Me.CustomSideButton4.Location = New System.Drawing.Point(194, 151)
+        Me.CustomSideButton4.Name = "CustomSideButton4"
+        Me.CustomSideButton4.NoRounding = True
+        Me.CustomSideButton4.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton4.Size = New System.Drawing.Size(180, 30)
+        Me.CustomSideButton4.TabIndex = 3
+        Me.CustomSideButton4.Text = "CUSTOM FAVORITE 4"
+        Me.CustomSideButton4.Transparent = False
+        '
+        'CustomSideButton2
+        '
+        Me.CustomSideButton2.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton2.Customization = ""
+        Me.CustomSideButton2.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton2.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.CustomSideButton2.Image = Nothing
+        Me.CustomSideButton2.Location = New System.Drawing.Point(194, 115)
+        Me.CustomSideButton2.Name = "CustomSideButton2"
+        Me.CustomSideButton2.NoRounding = True
+        Me.CustomSideButton2.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton2.Size = New System.Drawing.Size(180, 30)
+        Me.CustomSideButton2.TabIndex = 3
+        Me.CustomSideButton2.Text = "CUSTOM FAVORITE 2"
+        Me.CustomSideButton2.Transparent = False
+        '
+        'CustomSideButton3
+        '
+        Me.CustomSideButton3.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton3.Customization = ""
+        Me.CustomSideButton3.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton3.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.CustomSideButton3.Image = Nothing
+        Me.CustomSideButton3.Location = New System.Drawing.Point(8, 151)
+        Me.CustomSideButton3.Name = "CustomSideButton3"
+        Me.CustomSideButton3.NoRounding = True
+        Me.CustomSideButton3.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton3.Size = New System.Drawing.Size(180, 30)
+        Me.CustomSideButton3.TabIndex = 3
+        Me.CustomSideButton3.Text = "CUSTOM FAVORITE 3"
+        Me.CustomSideButton3.Transparent = False
+        '
+        'CustomSideButton1
+        '
+        Me.CustomSideButton1.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.CustomSideButton1.Customization = ""
+        Me.CustomSideButton1.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.CustomSideButton1.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.CustomSideButton1.Image = Nothing
+        Me.CustomSideButton1.Location = New System.Drawing.Point(8, 115)
+        Me.CustomSideButton1.Name = "CustomSideButton1"
+        Me.CustomSideButton1.NoRounding = True
+        Me.CustomSideButton1.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
+        Me.CustomSideButton1.Size = New System.Drawing.Size(180, 30)
+        Me.CustomSideButton1.TabIndex = 3
+        Me.CustomSideButton1.Text = "CUSTOM FAVORITE 1"
+        Me.CustomSideButton1.Transparent = False
         '
         'cmbMainInputs
         '
@@ -172,10 +315,42 @@ Partial Class Form1
         Me.cmbMainInputs.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmbMainInputs.ForeColor = System.Drawing.Color.White
         Me.cmbMainInputs.FormattingEnabled = True
-        Me.cmbMainInputs.Location = New System.Drawing.Point(6, 6)
+        Me.cmbMainInputs.Location = New System.Drawing.Point(8, 45)
         Me.cmbMainInputs.Name = "cmbMainInputs"
-        Me.cmbMainInputs.Size = New System.Drawing.Size(373, 28)
+        Me.cmbMainInputs.Size = New System.Drawing.Size(370, 28)
         Me.cmbMainInputs.TabIndex = 0
+        '
+        'btnMainInputNext
+        '
+        Me.btnMainInputNext.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnMainInputNext.Customization = ""
+        Me.btnMainInputNext.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Square
+        Me.btnMainInputNext.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnMainInputNext.Image = Nothing
+        Me.btnMainInputNext.Location = New System.Drawing.Point(194, 79)
+        Me.btnMainInputNext.Name = "btnMainInputNext"
+        Me.btnMainInputNext.NoRounding = False
+        Me.btnMainInputNext.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnMainInputNext.Size = New System.Drawing.Size(180, 30)
+        Me.btnMainInputNext.TabIndex = 2
+        Me.btnMainInputNext.Text = "INPUT NAME (NEXT)"
+        Me.btnMainInputNext.Transparent = False
+        '
+        'btnMainInputPrev
+        '
+        Me.btnMainInputPrev.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnMainInputPrev.Customization = ""
+        Me.btnMainInputPrev.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Square
+        Me.btnMainInputPrev.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnMainInputPrev.Image = Nothing
+        Me.btnMainInputPrev.Location = New System.Drawing.Point(8, 79)
+        Me.btnMainInputPrev.Name = "btnMainInputPrev"
+        Me.btnMainInputPrev.NoRounding = False
+        Me.btnMainInputPrev.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnMainInputPrev.Size = New System.Drawing.Size(180, 30)
+        Me.btnMainInputPrev.TabIndex = 2
+        Me.btnMainInputPrev.Text = "INPUT NAME (PREV)"
+        Me.btnMainInputPrev.Transparent = False
         '
         'tabHDZone
         '
@@ -183,7 +358,7 @@ Partial Class Form1
         Me.tabHDZone.Location = New System.Drawing.Point(5, 4)
         Me.tabHDZone.Name = "tabHDZone"
         Me.tabHDZone.Padding = New System.Windows.Forms.Padding(3)
-        Me.tabHDZone.Size = New System.Drawing.Size(385, 331)
+        Me.tabHDZone.Size = New System.Drawing.Size(386, 280)
         Me.tabHDZone.TabIndex = 1
         Me.tabHDZone.Text = "tabHDZone"
         '
@@ -192,7 +367,7 @@ Partial Class Form1
         Me.tabZone2.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
         Me.tabZone2.Location = New System.Drawing.Point(5, 4)
         Me.tabZone2.Name = "tabZone2"
-        Me.tabZone2.Size = New System.Drawing.Size(385, 331)
+        Me.tabZone2.Size = New System.Drawing.Size(386, 280)
         Me.tabZone2.TabIndex = 2
         Me.tabZone2.Text = "tabZone2"
         '
@@ -201,15 +376,15 @@ Partial Class Form1
         Me.btnZone2.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
         Me.btnZone2.Customization = ""
         Me.btnZone2.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
-        Me.btnZone2.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnZone2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnZone2.Image = Nothing
-        Me.btnZone2.Location = New System.Drawing.Point(279, 125)
+        Me.btnZone2.Location = New System.Drawing.Point(270, 129)
         Me.btnZone2.Name = "btnZone2"
         Me.btnZone2.NoRounding = False
         Me.btnZone2.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
-        Me.btnZone2.Size = New System.Drawing.Size(116, 30)
+        Me.btnZone2.Size = New System.Drawing.Size(125, 30)
         Me.btnZone2.TabIndex = 22
-        Me.btnZone2.Text = "ZONE 2"
+        Me.btnZone2.Text = "   ZONE 2"
         Me.btnZone2.Transparent = False
         '
         'btnHDZone
@@ -217,15 +392,15 @@ Partial Class Form1
         Me.btnHDZone.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
         Me.btnHDZone.Customization = ""
         Me.btnHDZone.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
-        Me.btnHDZone.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnHDZone.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnHDZone.Image = Nothing
-        Me.btnHDZone.Location = New System.Drawing.Point(158, 125)
+        Me.btnHDZone.Location = New System.Drawing.Point(138, 129)
         Me.btnHDZone.Name = "btnHDZone"
         Me.btnHDZone.NoRounding = False
         Me.btnHDZone.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
-        Me.btnHDZone.Size = New System.Drawing.Size(115, 30)
+        Me.btnHDZone.Size = New System.Drawing.Size(125, 30)
         Me.btnHDZone.TabIndex = 22
-        Me.btnHDZone.Text = "HDZONE"
+        Me.btnHDZone.Text = "  HDZONE"
         Me.btnHDZone.Transparent = False
         '
         'btnMainZone
@@ -233,13 +408,13 @@ Partial Class Form1
         Me.btnMainZone.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
         Me.btnMainZone.Customization = ""
         Me.btnMainZone.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
-        Me.btnMainZone.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnMainZone.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnMainZone.Image = Nothing
-        Me.btnMainZone.Location = New System.Drawing.Point(6, 125)
+        Me.btnMainZone.Location = New System.Drawing.Point(6, 129)
         Me.btnMainZone.Name = "btnMainZone"
         Me.btnMainZone.NoRounding = False
         Me.btnMainZone.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Yellow
-        Me.btnMainZone.Size = New System.Drawing.Size(145, 30)
+        Me.btnMainZone.Size = New System.Drawing.Size(125, 30)
         Me.btnMainZone.TabIndex = 22
         Me.btnMainZone.Text = "MAIN ZONE"
         Me.btnMainZone.Transparent = False
@@ -252,7 +427,7 @@ Partial Class Form1
         Me.Panel1.Controls.Add(Me.lblOSD)
         Me.Panel1.Location = New System.Drawing.Point(3, 27)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(395, 53)
+        Me.Panel1.Size = New System.Drawing.Size(395, 57)
         Me.Panel1.TabIndex = 21
         '
         'lblMVolume
@@ -260,7 +435,7 @@ Partial Class Form1
         Me.lblMVolume.BackColor = System.Drawing.Color.Transparent
         Me.lblMVolume.Font = New System.Drawing.Font("Segoe UI", 12.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblMVolume.ForeColor = System.Drawing.Color.Lime
-        Me.lblMVolume.Location = New System.Drawing.Point(266, 2)
+        Me.lblMVolume.Location = New System.Drawing.Point(269, 2)
         Me.lblMVolume.Name = "lblMVolume"
         Me.lblMVolume.Size = New System.Drawing.Size(126, 19)
         Me.lblMVolume.TabIndex = 2
@@ -287,9 +462,9 @@ Partial Class Form1
         Me.lblOSD.BackColor = System.Drawing.Color.Transparent
         Me.lblOSD.Font = New System.Drawing.Font("Segoe UI", 21.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblOSD.ForeColor = System.Drawing.Color.Lime
-        Me.lblOSD.Location = New System.Drawing.Point(0, 16)
+        Me.lblOSD.Location = New System.Drawing.Point(2, 20)
         Me.lblOSD.Name = "lblOSD"
-        Me.lblOSD.Size = New System.Drawing.Size(397, 43)
+        Me.lblOSD.Size = New System.Drawing.Size(393, 40)
         Me.lblOSD.TabIndex = 18
         Me.lblOSD.Text = "SCANNING INPUTS"
         Me.lblOSD.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -299,7 +474,7 @@ Partial Class Form1
         'SliderMVolume
         '
         Me.SliderMVolume.BackColor = System.Drawing.Color.FromArgb(CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer))
-        Me.SliderMVolume.Location = New System.Drawing.Point(142, 87)
+        Me.SliderMVolume.Location = New System.Drawing.Point(136, 92)
         Me.SliderMVolume.Maximum = 185
         Me.SliderMVolume.Minimum = 0
         Me.SliderMVolume.Name = "SliderMVolume"
@@ -315,7 +490,7 @@ Partial Class Form1
         Me.btnPwr.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
         Me.btnPwr.Font = New System.Drawing.Font("Verdana", 8.0!)
         Me.btnPwr.Image = Nothing
-        Me.btnPwr.Location = New System.Drawing.Point(5, 83)
+        Me.btnPwr.Location = New System.Drawing.Point(5, 88)
         Me.btnPwr.Name = "btnPwr"
         Me.btnPwr.NoRounding = False
         Me.btnPwr.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Green
@@ -360,7 +535,7 @@ Partial Class Form1
         Me.btnMVolumeDown.Customization = ""
         Me.btnMVolumeDown.Font = New System.Drawing.Font("Verdana", 8.0!)
         Me.btnMVolumeDown.Image = Nothing
-        Me.btnMVolumeDown.Location = New System.Drawing.Point(92, 83)
+        Me.btnMVolumeDown.Location = New System.Drawing.Point(86, 88)
         Me.btnMVolumeDown.Name = "btnMVolumeDown"
         Me.btnMVolumeDown.NoRounding = False
         Me.btnMVolumeDown.Size = New System.Drawing.Size(44, 30)
@@ -374,7 +549,7 @@ Partial Class Form1
         Me.btnMVolumeUp.Customization = ""
         Me.btnMVolumeUp.Font = New System.Drawing.Font("Verdana", 8.0!)
         Me.btnMVolumeUp.Image = Nothing
-        Me.btnMVolumeUp.Location = New System.Drawing.Point(253, 83)
+        Me.btnMVolumeUp.Location = New System.Drawing.Point(247, 88)
         Me.btnMVolumeUp.Name = "btnMVolumeUp"
         Me.btnMVolumeUp.NoRounding = False
         Me.btnMVolumeUp.Size = New System.Drawing.Size(44, 30)
@@ -389,7 +564,7 @@ Partial Class Form1
         Me.btnMute.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Custom_Image
         Me.btnMute.Font = New System.Drawing.Font("Verdana", 8.0!)
         Me.btnMute.Image = CType(resources.GetObject("btnMute.Image"), System.Drawing.Image)
-        Me.btnMute.Location = New System.Drawing.Point(303, 83)
+        Me.btnMute.Location = New System.Drawing.Point(303, 88)
         Me.btnMute.Name = "btnMute"
         Me.btnMute.NoRounding = False
         Me.btnMute.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
@@ -404,7 +579,7 @@ Partial Class Form1
         Me.CustomMiddleBar1.Customization = ""
         Me.CustomMiddleBar1.Font = New System.Drawing.Font("Verdana", 8.0!)
         Me.CustomMiddleBar1.Image = Nothing
-        Me.CustomMiddleBar1.Location = New System.Drawing.Point(92, 83)
+        Me.CustomMiddleBar1.Location = New System.Drawing.Point(86, 88)
         Me.CustomMiddleBar1.Name = "CustomMiddleBar1"
         Me.CustomMiddleBar1.NoRounding = False
         Me.CustomMiddleBar1.Size = New System.Drawing.Size(205, 31)
@@ -415,35 +590,21 @@ Partial Class Form1
         'NsSeperator1
         '
         Me.NsSeperator1.BackColor = System.Drawing.Color.FromArgb(CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer))
-        Me.NsSeperator1.Location = New System.Drawing.Point(3, 113)
+        Me.NsSeperator1.Location = New System.Drawing.Point(6, 118)
         Me.NsSeperator1.Name = "NsSeperator1"
-        Me.NsSeperator1.Size = New System.Drawing.Size(395, 11)
+        Me.NsSeperator1.Size = New System.Drawing.Size(390, 11)
         Me.NsSeperator1.TabIndex = 23
         Me.NsSeperator1.Text = "NsSeperator1"
         '
         'sepAdvanced
         '
         Me.sepAdvanced.BackColor = System.Drawing.Color.FromArgb(CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer), CType(CType(51, Byte), Integer))
-        Me.sepAdvanced.Location = New System.Drawing.Point(3, 158)
+        Me.sepAdvanced.Location = New System.Drawing.Point(3, 194)
         Me.sepAdvanced.Name = "sepAdvanced"
         Me.sepAdvanced.Size = New System.Drawing.Size(395, 11)
         Me.sepAdvanced.TabIndex = 24
         Me.sepAdvanced.Text = "NsSeperator2"
         Me.sepAdvanced.Visible = False
-        '
-        'CustomMiddleBar2
-        '
-        Me.CustomMiddleBar2.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
-        Me.CustomMiddleBar2.Customization = ""
-        Me.CustomMiddleBar2.Font = New System.Drawing.Font("Verdana", 8.0!)
-        Me.CustomMiddleBar2.Image = Nothing
-        Me.CustomMiddleBar2.Location = New System.Drawing.Point(6, 125)
-        Me.CustomMiddleBar2.Name = "CustomMiddleBar2"
-        Me.CustomMiddleBar2.NoRounding = False
-        Me.CustomMiddleBar2.Size = New System.Drawing.Size(389, 31)
-        Me.CustomMiddleBar2.TabIndex = 25
-        Me.CustomMiddleBar2.Text = "CustomMiddleBar2"
-        Me.CustomMiddleBar2.Transparent = False
         '
         'btnpwer
         '
@@ -466,7 +627,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(400, 160)
+        Me.ClientSize = New System.Drawing.Size(400, 200)
         Me.Controls.Add(Me.CustomTheme1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -481,6 +642,7 @@ Partial Class Form1
         Me.CustomTheme1.ResumeLayout(False)
         Me.tabControls.ResumeLayout(False)
         Me.tabMainZone.ResumeLayout(False)
+        Me.NsGroupBox1.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
         Me.ResumeLayout(False)
 
@@ -510,11 +672,20 @@ Partial Class Form1
     Friend WithEvents btnMainZone As Pioneer_VSX_Series_Remote_Control.CustomSideButton
     Friend WithEvents NsSeperator1 As Pioneer_VSX_Series_Remote_Control.NSSeperator
     Friend WithEvents sepAdvanced As Pioneer_VSX_Series_Remote_Control.NSSeperator
-    Friend WithEvents CustomMiddleBar2 As Pioneer_VSX_Series_Remote_Control.CustomMiddleBar
     Friend WithEvents tabControls As Pioneer_VSX_Series_Remote_Control.NSTabControl
     Friend WithEvents tabMainZone As System.Windows.Forms.TabPage
     Friend WithEvents tabHDZone As System.Windows.Forms.TabPage
     Friend WithEvents tabZone2 As System.Windows.Forms.TabPage
     Friend WithEvents cmbMainInputs As Pioneer_VSX_Series_Remote_Control.NSComboBox
+    Friend WithEvents btnMainInputNext As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents btnMainInputPrev As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents NsGroupBox1 As Pioneer_VSX_Series_Remote_Control.NSGroupBox
+    Friend WithEvents CustomSideButton4 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomSideButton2 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomSideButton3 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomSideButton1 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomSideButton7 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomSideButton6 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents CustomSideButton5 As Pioneer_VSX_Series_Remote_Control.CustomSideButton
 
 End Class
