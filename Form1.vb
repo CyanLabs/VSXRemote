@@ -13,6 +13,7 @@ Public Class Form1
     Dim autohide As Boolean = False
     Dim preventpowertoggle As Boolean = True
     Dim dictionary As New Dictionary(Of String, Integer)
+    Dim sleeptimer As String = ""
 
     'Args used for ip scanner.
     Private Class ScannerArgs
@@ -72,8 +73,7 @@ Public Class Form1
         cmbMainInputs.ValueMember = "Value"
 
         Do While serverIp Is Nothing
-            MsgBox("No VSX found, Closing application!" & vbNewLine & vbNewLine & "Manual configuration coming soon", MsgBoxStyle.Critical, "VSX Remote")
-            Application.Exit()
+            Threading.Thread.Sleep(1000)
         Loop
         NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Connected to " & New IPAddress(serverIp).ToString, ToolTipIcon.Info)
         If ConnectToVSX(serverIp, "8102") = True Then
@@ -103,6 +103,7 @@ Public Class Form1
         SendCommands("VU")
         SendCommands("VD")
         SendCommands("?p")
+        SendCommands("?sab")
     End Sub
 
     'Connects to VSX if not already.
@@ -117,14 +118,11 @@ Public Class Form1
         End Try
         Try
             tnSocket.Connect(ep)
-            If tnSocket.Connected Then
-                Return True
-            Else
-                Return False
-            End If
+            If tnSocket.Connected Then Return True
         Catch oEX As Exception
             Return False
         End Try
+        Return False
     End Function
 
     'Sends "cmd" to VSX.
@@ -266,7 +264,6 @@ Public Class Form1
                 ParseScreen(i)
             Next
             'Repeats sub
-            Threading.Thread.Sleep(500)
             UpdateScreen()
     End Sub
 
@@ -358,7 +355,28 @@ Public Class Form1
                     cmbMainInputs.DataSource = New BindingSource(dictionary, Nothing)
                 End If
             End If
-            Debug.WriteLine("RESPONSE: " & output.ToString)
+
+            If output.ToString = "E02" Then
+                lblOSD.Text = "NOT AVAILABLE"
+            End If
+
+            If output.ToString = "E04" Then
+                lblOSD.Text = "COMMAND ERROR"
+            End If
+
+            If output.ToString = "E06" Then
+                lblOSD.Text = "PARAMETER ERROR"
+            End If
+
+            If output.ToString = "B00" Then
+                lblOSD.Text = "DEVICE BUSY"
+            End If
+
+            'SLEEP INFORMATION
+            If output.ToString.Contains("SAB") Then
+                sleeptimer = output.ToString
+            End If
+            
         Catch
         End Try
     End Sub
@@ -369,25 +387,29 @@ Public Class Form1
     End Sub
 
     'Resizes window, Switches active tab depending on circumstances.
-    Private Sub btnMainZone_Click_1(sender As Object, e As EventArgs) Handles btnZone2.Click, btnMainZone.Click, btnHDZone.Click
+    Private Sub btnMainZone_Click_1(sender As Object, e As EventArgs) Handles btnZone2.Click, btnMainZone.Click, btnHDZone.Click, btnSound.Click, btnPlayback.Click, btnNavigation.Click
         Dim color = sender.sidecolor
 
         btnMainZone.SideColor = CustomSideButton._Color.Yellow
         btnHDZone.SideColor = CustomSideButton._Color.Yellow
         btnZone2.SideColor = CustomSideButton._Color.Yellow
+        btnSound.SideColor = CustomSideButton._Color.Yellow
+        btnNavigation.SideColor = CustomSideButton._Color.Yellow
+        btnPlayback.SideColor = CustomSideButton._Color.Yellow
 
-        If Me.Height = 500 And color = CustomSideButton._Color.Green Then
+        If Me.Height = 400 And color = CustomSideButton._Color.Green Then
             Me.Height = 200
-            sepAdvanced.Visible = False
         ElseIf color = CustomSideButton._Color.Yellow OrElse Me.Height = 200 Then
-            Me.Height = 500
-            sepAdvanced.Visible = True
+            Me.Height = 400
             sender.sidecolor = CustomSideButton._Color.Green
         End If
 
         If sender.name = "btnMainZone" Then tabControls.SelectedIndex = 0
         If sender.name = "btnHDZone" Then tabControls.SelectedIndex = 1
         If sender.name = "btnZone2" Then tabControls.SelectedIndex = 2
+        If sender.name = "btnSound" Then tabControls.SelectedIndex = 3
+        If sender.name = "btnNavigation" Then tabControls.SelectedIndex = 4
+        If sender.name = "btnPlayback" Then tabControls.SelectedIndex = 5
 
         Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
     End Sub
@@ -407,19 +429,71 @@ Public Class Form1
         End If
     End Sub
 
-    Private Sub btnMainInputCycle_Click(sender As Object, e As EventArgs) Handles btnMainInputNext.Click, btnMainInputPrev.Click
-        SendCommands(sender.tag & "FN")
+    'Change input to the sender.tag's value.
+    Private Sub btnMainInputCycle_Click(sender As Object, e As EventArgs) Handles CustomSideButton4.Click, CustomSideButton3.Click, CustomSideButton2.Click, CustomSideButton1.Click, btnMainInputPrev.Click, btnMainInputNext.Click
+        If Not sender.tag = "" Then SendCommands(sender.tag & "FN")
     End Sub
 
-    Private Sub btnMainInputPrev_Click(sender As Object, e As EventArgs)
-
+    'Send DPAD Enter.
+    Private Sub btnNavOK_Click(sender As Object, e As EventArgs) Handles btnNavOK.Click
+        SendCommands("CEN")
     End Sub
 
-    Private Sub btnMainInputNext_Click(sender As Object, e As EventArgs)
-
+    'Send DPAD Right.
+    Private Sub btnNavRight_Click(sender As Object, e As EventArgs) Handles btnNavRight.Click
+        SendCommands("CRI")
     End Sub
 
-    Private Sub CustomTheme1_Click(sender As Object, e As EventArgs) Handles CustomTheme1.Click
+    'Send DPAD Left.
+    Private Sub btnNavLeft_Click(sender As Object, e As EventArgs) Handles btnNavLeft.Click
+        SendCommands("CLE")
+    End Sub
 
+    'Send DPAD Up.
+    Private Sub btnNavUp_Click(sender As Object, e As EventArgs) Handles btnNavUp.Click
+        SendCommands("CUP")
+    End Sub
+
+    'Send DPAD Down.
+    Private Sub btnNavDown_Click(sender As Object, e As EventArgs) Handles btnNavDown.Click
+        SendCommands("CDN")
+    End Sub
+
+    'Send Audio Parameters.
+    Private Sub btnNavAudio_Click(sender As Object, e As EventArgs) Handles btnNavAudio.Click
+        SendCommands("APA")
+    End Sub
+
+    'Send Video Parameters.
+    Private Sub btnNavVideo_Click(sender As Object, e As EventArgs) Handles btnNavVideo.Click
+        SendCommands("VPA")
+    End Sub
+
+    'Send Home/Menu.
+    Private Sub btnNavHome_Click(sender As Object, e As EventArgs) Handles btnNavHome.Click
+        SendCommands("HM")
+    End Sub
+
+    'Send DPAD Return.
+    Private Sub btnNavReturn_Click(sender As Object, e As EventArgs) Handles btnNavReturn.Click
+        SendCommands("CRT")
+    End Sub
+
+    'Send Info/Status.
+    Private Sub btnNavInfo_Click(sender As Object, e As EventArgs) Handles btnNavInfo.Click
+        SendCommands("STS")
+    End Sub
+
+    'Toggle Sleep Status.
+    Private Sub btnNavSleep_Click(sender As Object, e As EventArgs) Handles btnNavSleep.Click
+        If sleeptimer = "SAB000" Then
+            SendCommands("030SAB")
+        ElseIf sleeptimer = "SAB030" Then
+            SendCommands("060SAB")
+        ElseIf sleeptimer = "SAB060" Then
+            SendCommands("090SAB")
+        ElseIf sleeptimer = "SAB090" Then
+            SendCommands("000SAB")
+        End If
     End Sub
 End Class
