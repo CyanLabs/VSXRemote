@@ -618,18 +618,22 @@ Public Class Form1
         SendCommands("Z2MZ")
     End Sub
 
+    'Update Zone 2 Volume
     Private Sub SliderZ2Volume_MouseUp(sender As Object, e As MouseEventArgs) Handles SliderZ2Volume.MouseUp
         ValidateZ2Volume(SliderZ2Volume.Value)
     End Sub
 
+    'Decrease Zone 2 Volume by 5
     Private Sub btnZ2VolumeDown_Click(sender As Object, e As EventArgs) Handles btnZ2VolumeDown.Click
         ValidateZ2Volume(SliderZ2Volume.Value - 5)
     End Sub
 
+    'Increase Zone 2 Volume by 5
     Private Sub btnZ2VolumeUp_Click(sender As Object, e As EventArgs) Handles btnZ2VolumeUp.Click
         ValidateZ2Volume(SliderZ2Volume.Value + 5)
     End Sub
 
+    'Checks Zone 2 power status and toggles power.
     Private Sub btnZ2Pwr_Click(sender As Object, e As EventArgs) Handles btnZ2Pwr.Click
         preventZ2toggle = False
         SendCommands("?AP")
