@@ -20,6 +20,31 @@ Public Class Form1
         Public IntArg As Integer
     End Class
 
+    'Sound Modes, Long List
+    Dim soundmodes() As String = {"STEREO (cyclic)", "STANDARD", "STEREO (direct set)", "(2ch source)", "PRO LOGIC2 MOVIE",
+    "PRO LOGIC2x MOVIE", "PRO LOGIC2 MUSIC", "PRO LOGIC2x MUSIC", "PRO LOGIC2 GAME", "PRO LOGIC2x GAME", "PRO LOGIC2z HEIGHT",
+    "WIDE SURROUND MOVIE", "WIDE SURROUND MUSIC", "PRO LOGIC", "Neo:6 CINEMA", "Neo:6 MUSIC", "XM HD SURROUND", "NEURAL SURROUND",
+    "Neo:X CINEMA", "Neo:X MUSIC", "Neo:X GAME", "NEURAL SURROUND+Neo:X CINEMA", "NEURAL SURROUND+Neo:X MUSIC",
+    "NEURAL SURROUND+Neo:X GAME", "(Multi ch source)", "(Multi ch source)+DOLBY EX", "(Multi ch source)+PRO LOGIC2x MOVIE",
+    "(Multi ch source)+PRO LOGIC2x MUSIC", "(Multi-ch Source)+PRO LOGIC2z HEIGHT", "(Multi-ch Source)+WIDE SURROUND MOVIE",
+    "(Multi-ch Source)+WIDE SURROUND MUSIC", "(Multi ch source)DTS-ES Neo:6", "(Multi ch source)DTS-ES matrix",
+    "(Multi ch source)DTS-ES discrete", "(Multi ch source)DTS-ES 8ch discrete", "(Multi ch source)DTS-ES Neo:X",
+    "ADVANCED SURROUND (cyclic)", "ACTION", "DRAMA", "SCI-FI", "MONO FILM", "ENTERTAINMENT SHOW", "EXPANDED THEATER", "TV SURROUND",
+    "ADVANCED GAME", "SPORTS", "CLASSICAL", "ROCK/POP", "UNPLUGGED", "EXTENDED STEREO", "Front Stage Surround Advance Focus", "Front Stage Surround Advance Wide",
+     "RETRIEVER AIR", "PHONES SURROUND", "THX (cyclic)", "PROLOGIC + THX CINEMA", "PL2 MOVIE + THX CINEMA", "Neo:6 CINEMA + THX CINEMA",
+    "PL2x MOVIE + THX CINEMA", "PL2z HEIGHT + THX CINEMA", "THX SELECT2 GAMES", "THX CINEMA (for 2ch)", "THX MUSIC (for 2ch)",
+    "THX GAMES (for 2ch)", "PL2 MUSIC + THX MUSIC", "PL2x MUSIC + THX MUSIC", "PL2z HEIGHT + THX MUSIC", "Neo:6 MUSIC + THX MUSIC",
+    "PL2 GAME + THX GAMES", "PL2x GAME + THX GAMES", "PL2z HEIGHT + THX GAMES", "THX ULTRA2 GAMES", "PROLOGIC + THX MUSIC", "PROLOGIC + THX GAMES",
+    "Neo:X CINEMA + THX CINEMA", "Neo:X MUSIC + THX MUSIC", "Neo:X GAME + THX GAMES", "THX CINEMA (for multi ch)", "THX SURROUND EX (for multi ch)",
+    "PL2x MOVIE + THX CINEMA (for multi ch)", "PL2z HEIGHT + THX CINEMA (for multi ch)", "ES Neo:6 + THX CINEMA (for multi ch)", "ES MATRIX + THX CINEMA (for multi ch)",
+    "ES DISCRETE + THX CINEMA (for multi ch)", "ES 8ch DISCRETE + THX CINEMA (for multi ch)", "THX SELECT2 CINEMA (for multi ch)", "THX SELECT2 MUSIC (for multi ch)",
+    "THX SELECT2 GAMES (for multi ch)", "THX ULTRA2 CINEMA (for multi ch)", "THX ULTRA2 MUSIC (for multi ch)", "THX ULTRA2 GAMES (for multi ch)", "THX MUSIC (for multi ch)",
+    "THX GAMES (for multi ch)", "PL2x MUSIC + THX MUSIC (for multi ch)", "PL2z HEIGHT + THX MUSIC (for multi ch)", "EX + THX GAMES (for multi ch)",
+    "PL2z HEIGHT + THX GAMES (for multi ch)", "Neo:6 + THX MUSIC (for multi ch)", "Neo:6 + THX GAMES (for multi ch)", "ES MATRIX + THX MUSIC (for multi ch)",
+    "ES MATRIX + THX GAMES (for multi ch)", "ES DISCRETE + THX MUSIC (for multi ch)", "ES DISCRETE + THX GAMES (for multi ch)", "ES 8CH DISCRETE + THX MUSIC (for multi ch)",
+    "ES 8CH DISCRETE + THX GAMES (for multi ch)", "Neo:X + THX CINEMA (for multi ch)", "Neo:X + THX MUSIC (for multi ch)", "Neo:X + THX GAMES (for multi ch)",
+    "AUTO SURR/STREAM DIRECT (cyclic)", "AUTO SURROUND", "Auto Level Control (A.L.C.)", "DIRECT", "PURE DIRECT", "OPTIMUM SURROUND"}
+
     'basically builds a ip from the IP bytes then tries to connect to the IP:8102 and if successful assumes it is a pioneer device.
     'TODO - Implement SSDP request instead of this bad method to find the AVR.
     Private Sub ScanIP(ByVal e As ScannerArgs)
@@ -74,6 +99,10 @@ Public Class Form1
         cmbHDZInputs.ValueMember = "Value"
         cmbZ2Inputs.DisplayMember = "Key"
         cmbZ2Inputs.ValueMember = "Value"
+        cmbSoundModes.DisplayMember = "Key"
+        cmbSoundModes.ValueMember = "Value"
+
+        cmbSoundModes.Items.AddRange(soundmodes)
 
         Do While serverIp Is Nothing
             Threading.Thread.Sleep(1000)
@@ -100,6 +129,44 @@ Public Class Form1
     End Sub
 
     Private Sub PollInfo()
+        'Zone 2 Volume
+        SendCommands("?zv")
+
+        'Main Power
+        SendCommands("?p")
+
+        'Zone 2 Power
+        SendCommands("?ap")
+
+        'HDZone Power
+        SendCommands("?zep")
+
+        'MCACC Status
+        SendCommands("?mc")
+
+        'Sleep Status
+        SendCommands("?sab")
+
+        'HDMI Passthrough
+        SendCommands("?ha")
+
+        'Phase Control
+        SendCommands("?is")
+
+        Threading.Thread.Sleep(1000)
+
+        'VHT
+        SendCommands("?vht")
+
+        'VSB
+        SendCommands("?vsb")
+
+        'PQLS
+        SendCommands("?pq")
+
+        'EQ
+        SendCommands("?atc")
+
         'Main input
         SendCommands("?f")
 
@@ -120,21 +187,6 @@ Public Class Form1
 
         'Volume Up
         SendCommands("vu")
-
-        'Zone 2 Volume
-        SendCommands("?zv")
-
-        'Main Power
-        SendCommands("?p")
-
-        'Zone 2 Power
-        SendCommands("?ap")
-
-        'HDZone Power
-        SendCommands("?zep")
-
-        'Sleep Status
-        SendCommands("?sab")
     End Sub
 
     'Connects to VSX if not already.
@@ -327,8 +379,45 @@ Public Class Form1
     'A Sub to seperate the output in to various sections and respond appropiately.
     Sub ParseScreen(output As String)
         Try
-            'SCREEN INFORMATION
             output = output.Replace(vbLf, "").Replace(vbCrLf, "")
+
+            If output.ToString.Substring(0, 3) = "IS1" Then
+                btnSoundPhaseControl.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 3) = "IS0" Then
+                btnSoundPhaseControl.SideColor = CustomSideButton._Color.Red
+            End If
+
+            If output.ToString.Substring(0, 4) = "VHT1" Then
+                btnSoundVirtualHeight.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 4) = "VHT0" Then
+                btnSoundVirtualHeight.SideColor = CustomSideButton._Color.Red
+            End If
+
+            If output.ToString.Substring(0, 4) = "VSB1" Then
+                btnSoundVirtualSB.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 4) = "VSB0" Then
+                btnSoundVirtualSB.SideColor = CustomSideButton._Color.Red
+            End If
+
+            If output.ToString.Substring(0, 3) = "PQ1" Then
+                btnSoundPQLS.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 3) = "PQ0" Then
+                btnSoundPQLS.SideColor = CustomSideButton._Color.Red
+            End If
+
+            If output.ToString.Substring(0, 4) = "ATC1" Then
+                btnSoundEQ.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 4) = "ATC0" Then
+                btnSoundEQ.SideColor = CustomSideButton._Color.Red
+            End If
+
+            If output.ToString.Substring(0, 3) = "HA1" Then
+                btnSoundPassthrough.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 3) = "HA0" Then
+                btnSoundPassthrough.SideColor = CustomSideButton._Color.Red
+            End If
+
+            'SCREEN INFORMATION
             If output.ToString.Contains("FL0") Then
                 Dim TempScreen = output
                 Dim decryptedOSD As String = DecryptScreen(TempScreen)
@@ -637,5 +726,57 @@ Public Class Form1
     Private Sub btnZ2Pwr_Click(sender As Object, e As EventArgs) Handles btnZ2Pwr.Click
         preventZ2toggle = False
         SendCommands("?AP")
+    End Sub
+
+    Private Sub btnSoundPhaseControl_Click(sender As Object, e As EventArgs) Handles btnSoundPhaseControl.Click
+        If sender.sidecolor = CustomSideButton._Color.Green Then
+            SendCommands("0IS")
+        Else
+            SendCommands("1IS")
+        End If
+    End Sub
+
+    Private Sub btnSoundVirtualHeight_Click(sender As Object, e As EventArgs) Handles btnSoundVirtualHeight.Click
+        If sender.sidecolor = CustomSideButton._Color.Green Then
+            SendCommands("0VHT")
+        Else
+            SendCommands("1VHT")
+        End If
+    End Sub
+
+    Private Sub btnSoundVirtualSB_Click(sender As Object, e As EventArgs) Handles btnSoundVirtualSB.Click
+        If sender.sidecolor = CustomSideButton._Color.Green Then
+            SendCommands("0VSB")
+        Else
+            SendCommands("1VSB")
+        End If
+    End Sub
+
+    Private Sub btnSoundPQLS_Click(sender As Object, e As EventArgs) Handles btnSoundPQLS.Click
+        If sender.sidecolor = CustomSideButton._Color.Green Then
+            SendCommands("0PQ")
+        Else
+            SendCommands("1PQ")
+        End If
+    End Sub
+
+    Private Sub btnEQToggle_Click(sender As Object, e As EventArgs) Handles btnSoundEQ.Click
+        If sender.sidecolor = CustomSideButton._Color.Green Then
+            SendCommands("0ATC")
+        Else
+            SendCommands("1ATC")
+        End If
+    End Sub
+
+    Private Sub btnSoundOutputToggle_Click(sender As Object, e As EventArgs) Handles btnSoundPassthrough.Click
+        If sender.sidecolor = CustomSideButton._Color.Green Then
+            SendCommands("0HA")
+        Else
+            SendCommands("1HA")
+        End If
+    End Sub
+
+    Private Sub cmbMCACC_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbMCACC.SelectionChangeCommitted
+        SendCommands((cmbMCACC.SelectedIndex + 1) & "MC")
     End Sub
 End Class

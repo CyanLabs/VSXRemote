@@ -70,6 +70,17 @@ Partial Class Form1
         Me.btnZ2Pwr = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
         Me.cmbZ2Inputs = New Pioneer_VSX_Series_Remote_Control.NSComboBox()
         Me.tabSound = New System.Windows.Forms.TabPage()
+        Me.NsGroupBox4 = New Pioneer_VSX_Series_Remote_Control.NSGroupBox()
+        Me.btnSoundVirtualSB = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnSoundPhaseControl = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnSoundPassthrough = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnSoundEQ = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnSoundPQLS = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.btnSoundVirtualHeight = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
+        Me.Label2 = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.cmbMCACC = New Pioneer_VSX_Series_Remote_Control.NSComboBox()
+        Me.cmbSoundModes = New Pioneer_VSX_Series_Remote_Control.NSComboBox()
         Me.tabNavigation = New System.Windows.Forms.TabPage()
         Me.btnNavDown = New System.Windows.Forms.PictureBox()
         Me.btnNavRight = New System.Windows.Forms.PictureBox()
@@ -109,6 +120,8 @@ Partial Class Form1
         Me.NsGroupBox2.SuspendLayout()
         Me.tabZone2.SuspendLayout()
         Me.NsGroupBox3.SuspendLayout()
+        Me.tabSound.SuspendLayout()
+        Me.NsGroupBox4.SuspendLayout()
         Me.tabNavigation.SuspendLayout()
         CType(Me.btnNavDown, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.btnNavRight, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -184,7 +197,7 @@ Partial Class Form1
         Me.CustomTheme1.Name = "CustomTheme1"
         Me.CustomTheme1.NoRounding = False
         Me.CustomTheme1.Sizable = False
-        Me.CustomTheme1.Size = New System.Drawing.Size(400, 200)
+        Me.CustomTheme1.Size = New System.Drawing.Size(400, 400)
         Me.CustomTheme1.SmartBounds = True
         Me.CustomTheme1.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
         Me.CustomTheme1.TabIndex = 3
@@ -240,7 +253,6 @@ Partial Class Form1
         Me.btnSound.TabIndex = 27
         Me.btnSound.Text = "    SOUND"
         Me.btnSound.Transparent = True
-        Me.btnSound.Visible = False
         '
         'tabControls
         '
@@ -773,11 +785,177 @@ Partial Class Form1
         'tabSound
         '
         Me.tabSound.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
+        Me.tabSound.Controls.Add(Me.NsGroupBox4)
         Me.tabSound.Location = New System.Drawing.Point(5, 4)
         Me.tabSound.Name = "tabSound"
         Me.tabSound.Size = New System.Drawing.Size(386, 189)
         Me.tabSound.TabIndex = 3
         Me.tabSound.Text = "tabSound"
+        '
+        'NsGroupBox4
+        '
+        Me.NsGroupBox4.Controls.Add(Me.btnSoundVirtualSB)
+        Me.NsGroupBox4.Controls.Add(Me.btnSoundPhaseControl)
+        Me.NsGroupBox4.Controls.Add(Me.btnSoundPassthrough)
+        Me.NsGroupBox4.Controls.Add(Me.btnSoundEQ)
+        Me.NsGroupBox4.Controls.Add(Me.btnSoundPQLS)
+        Me.NsGroupBox4.Controls.Add(Me.btnSoundVirtualHeight)
+        Me.NsGroupBox4.Controls.Add(Me.Label2)
+        Me.NsGroupBox4.Controls.Add(Me.Label1)
+        Me.NsGroupBox4.Controls.Add(Me.cmbMCACC)
+        Me.NsGroupBox4.Controls.Add(Me.cmbSoundModes)
+        Me.NsGroupBox4.DrawSeperator = True
+        Me.NsGroupBox4.ForeColor = System.Drawing.Color.White
+        Me.NsGroupBox4.Location = New System.Drawing.Point(0, 0)
+        Me.NsGroupBox4.Name = "NsGroupBox4"
+        Me.NsGroupBox4.Size = New System.Drawing.Size(386, 189)
+        Me.NsGroupBox4.SubTitle = "Change Surround Settings"
+        Me.NsGroupBox4.TabIndex = 4
+        Me.NsGroupBox4.Text = "NsGroupBox4"
+        Me.NsGroupBox4.Title = "Sound Configuration"
+        '
+        'btnSoundVirtualSB
+        '
+        Me.btnSoundVirtualSB.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnSoundVirtualSB.Customization = ""
+        Me.btnSoundVirtualSB.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.btnSoundVirtualSB.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnSoundVirtualSB.Image = Nothing
+        Me.btnSoundVirtualSB.Location = New System.Drawing.Point(7, 113)
+        Me.btnSoundVirtualSB.Name = "btnSoundVirtualSB"
+        Me.btnSoundVirtualSB.NoRounding = False
+        Me.btnSoundVirtualSB.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnSoundVirtualSB.Size = New System.Drawing.Size(120, 30)
+        Me.btnSoundVirtualSB.TabIndex = 3
+        Me.btnSoundVirtualSB.Text = "Virtual SB"
+        Me.btnSoundVirtualSB.Transparent = False
+        '
+        'btnSoundPhaseControl
+        '
+        Me.btnSoundPhaseControl.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnSoundPhaseControl.Customization = ""
+        Me.btnSoundPhaseControl.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.btnSoundPhaseControl.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnSoundPhaseControl.Image = Nothing
+        Me.btnSoundPhaseControl.Location = New System.Drawing.Point(133, 113)
+        Me.btnSoundPhaseControl.Name = "btnSoundPhaseControl"
+        Me.btnSoundPhaseControl.NoRounding = False
+        Me.btnSoundPhaseControl.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnSoundPhaseControl.Size = New System.Drawing.Size(120, 30)
+        Me.btnSoundPhaseControl.TabIndex = 3
+        Me.btnSoundPhaseControl.Text = "Phase Control"
+        Me.btnSoundPhaseControl.Transparent = False
+        '
+        'btnSoundPassthrough
+        '
+        Me.btnSoundPassthrough.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnSoundPassthrough.Customization = ""
+        Me.btnSoundPassthrough.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.btnSoundPassthrough.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnSoundPassthrough.Image = Nothing
+        Me.btnSoundPassthrough.Location = New System.Drawing.Point(259, 113)
+        Me.btnSoundPassthrough.Name = "btnSoundPassthrough"
+        Me.btnSoundPassthrough.NoRounding = False
+        Me.btnSoundPassthrough.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnSoundPassthrough.Size = New System.Drawing.Size(120, 30)
+        Me.btnSoundPassthrough.TabIndex = 3
+        Me.btnSoundPassthrough.Text = "Passthrough"
+        Me.btnSoundPassthrough.Transparent = False
+        '
+        'btnSoundEQ
+        '
+        Me.btnSoundEQ.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnSoundEQ.Customization = ""
+        Me.btnSoundEQ.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.btnSoundEQ.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnSoundEQ.Image = Nothing
+        Me.btnSoundEQ.Location = New System.Drawing.Point(259, 77)
+        Me.btnSoundEQ.Name = "btnSoundEQ"
+        Me.btnSoundEQ.NoRounding = False
+        Me.btnSoundEQ.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnSoundEQ.Size = New System.Drawing.Size(120, 30)
+        Me.btnSoundEQ.TabIndex = 3
+        Me.btnSoundEQ.Text = "   Equalizer"
+        Me.btnSoundEQ.Transparent = False
+        '
+        'btnSoundPQLS
+        '
+        Me.btnSoundPQLS.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnSoundPQLS.Customization = ""
+        Me.btnSoundPQLS.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.btnSoundPQLS.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnSoundPQLS.Image = Nothing
+        Me.btnSoundPQLS.Location = New System.Drawing.Point(133, 77)
+        Me.btnSoundPQLS.Name = "btnSoundPQLS"
+        Me.btnSoundPQLS.NoRounding = False
+        Me.btnSoundPQLS.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnSoundPQLS.Size = New System.Drawing.Size(120, 30)
+        Me.btnSoundPQLS.TabIndex = 3
+        Me.btnSoundPQLS.Text = "     PQLS"
+        Me.btnSoundPQLS.Transparent = False
+        '
+        'btnSoundVirtualHeight
+        '
+        Me.btnSoundVirtualHeight.Colors = New Pioneer_VSX_Series_Remote_Control.Bloom(-1) {}
+        Me.btnSoundVirtualHeight.Customization = ""
+        Me.btnSoundVirtualHeight.DisplayIcon = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Icon.Circle
+        Me.btnSoundVirtualHeight.Font = New System.Drawing.Font("Verdana", 8.0!)
+        Me.btnSoundVirtualHeight.Image = Nothing
+        Me.btnSoundVirtualHeight.Location = New System.Drawing.Point(7, 77)
+        Me.btnSoundVirtualHeight.Name = "btnSoundVirtualHeight"
+        Me.btnSoundVirtualHeight.NoRounding = False
+        Me.btnSoundVirtualHeight.SideColor = Pioneer_VSX_Series_Remote_Control.CustomSideButton._Color.Red
+        Me.btnSoundVirtualHeight.Size = New System.Drawing.Size(120, 30)
+        Me.btnSoundVirtualHeight.TabIndex = 3
+        Me.btnSoundVirtualHeight.Text = "Virtual Height"
+        Me.btnSoundVirtualHeight.Transparent = False
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label2.Location = New System.Drawing.Point(13, 48)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(113, 16)
+        Me.Label2.TabIndex = 2
+        Me.Label2.Text = "Surround Mode:"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Font = New System.Drawing.Font("Verdana", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label1.Location = New System.Drawing.Point(13, 157)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(117, 16)
+        Me.Label1.TabIndex = 2
+        Me.Label1.Text = "MCACC Memory:"
+        '
+        'cmbMCACC
+        '
+        Me.cmbMCACC.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
+        Me.cmbMCACC.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cmbMCACC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbMCACC.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmbMCACC.ForeColor = System.Drawing.Color.White
+        Me.cmbMCACC.FormattingEnabled = True
+        Me.cmbMCACC.Items.AddRange(New Object() {"MCACC MEMORY 1", "MCACC MEMORY 2", "MCACC MEMORY 3", "MCACC MEMORY 4", "MCACC MEMORY 5", "MCACC MEMORY 6"})
+        Me.cmbMCACC.Location = New System.Drawing.Point(130, 152)
+        Me.cmbMCACC.Name = "cmbMCACC"
+        Me.cmbMCACC.Size = New System.Drawing.Size(244, 28)
+        Me.cmbMCACC.TabIndex = 1
+        '
+        'cmbSoundModes
+        '
+        Me.cmbSoundModes.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
+        Me.cmbSoundModes.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cmbSoundModes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbSoundModes.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmbSoundModes.ForeColor = System.Drawing.Color.White
+        Me.cmbSoundModes.FormattingEnabled = True
+        Me.cmbSoundModes.Location = New System.Drawing.Point(128, 43)
+        Me.cmbSoundModes.Name = "cmbSoundModes"
+        Me.cmbSoundModes.Size = New System.Drawing.Size(246, 28)
+        Me.cmbSoundModes.TabIndex = 1
         '
         'tabNavigation
         '
@@ -1200,7 +1378,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(400, 200)
+        Me.ClientSize = New System.Drawing.Size(400, 400)
         Me.Controls.Add(Me.CustomTheme1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -1220,6 +1398,9 @@ Partial Class Form1
         Me.NsGroupBox2.ResumeLayout(False)
         Me.tabZone2.ResumeLayout(False)
         Me.NsGroupBox3.ResumeLayout(False)
+        Me.tabSound.ResumeLayout(False)
+        Me.NsGroupBox4.ResumeLayout(False)
+        Me.NsGroupBox4.PerformLayout()
         Me.tabNavigation.ResumeLayout(False)
         Me.tabNavigation.PerformLayout()
         CType(Me.btnNavDown, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1306,5 +1487,16 @@ Partial Class Form1
     Friend WithEvents cmbZ2Inputs As Pioneer_VSX_Series_Remote_Control.NSComboBox
     Friend WithEvents NsSeperator2 As Pioneer_VSX_Series_Remote_Control.NSSeperator
     Friend WithEvents NsSeperator3 As Pioneer_VSX_Series_Remote_Control.NSSeperator
+    Friend WithEvents cmbSoundModes As Pioneer_VSX_Series_Remote_Control.NSComboBox
+    Friend WithEvents NsGroupBox4 As Pioneer_VSX_Series_Remote_Control.NSGroupBox
+    Friend WithEvents btnSoundVirtualSB As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents btnSoundPhaseControl As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents btnSoundPassthrough As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents btnSoundPQLS As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents btnSoundVirtualHeight As Pioneer_VSX_Series_Remote_Control.CustomSideButton
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents cmbMCACC As Pioneer_VSX_Series_Remote_Control.NSComboBox
+    Friend WithEvents btnSoundEQ As Pioneer_VSX_Series_Remote_Control.CustomSideButton
 
 End Class
