@@ -5,13 +5,12 @@ Imports System.Runtime.InteropServices
 
 Public Class Form1
 
-
     'Various variables.
     Dim hostIp As IPAddress, serverIp As Byte(), ep As IPEndPoint
     Dim tnSocket As New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
     Dim CheckScreen As New System.Threading.Thread(AddressOf UpdateScreen)
     Dim autohide As Boolean = False
-    Dim preventpowertoggle As Boolean = True
+    Dim preventpowertoggle As Boolean = True, preventHDZtoggle As Boolean = True, preventZ2toggle As Boolean = True
     Dim dictionary As New Dictionary(Of String, Integer)
     Dim sleeptimer As String = ""
 
@@ -41,7 +40,6 @@ Public Class Form1
         Finally
             tmpClient.Close()
         End Try
-
     End Sub
     Private Sub Form1_load(sender As Object, e As EventArgs) Handles MyBase.Load
         CheckForIllegalCrossThreadCalls = False
@@ -69,8 +67,13 @@ Public Class Form1
         lblOSD.Font = CustomFont.GetInstance(lblOSD.Font.Size, FontStyle.Regular)
         lblMainInput.Font = CustomFont.GetInstance(lblMainInput.Font.Size, FontStyle.Regular)
         lblMVolume.Font = CustomFont.GetInstance(lblMVolume.Font.Size, FontStyle.Regular)
+
         cmbMainInputs.DisplayMember = "Key"
         cmbMainInputs.ValueMember = "Value"
+        cmbHDZInputs.DisplayMember = "Key"
+        cmbHDZInputs.ValueMember = "Value"
+        cmbZ2Inputs.DisplayMember = "Key"
+        cmbZ2Inputs.ValueMember = "Value"
 
         Do While serverIp Is Nothing
             Threading.Thread.Sleep(1000)
@@ -96,21 +99,47 @@ Public Class Form1
         If autohide Then Timer1.Start()
     End Sub
 
-    'Queries input, mute status, volume status (easiest way is to increase volume .5dB as ?v caused issues) and power status.
     Private Sub PollInfo()
+        'Main input
         SendCommands("?f")
+
+        'HDZone input
+        SendCommands("?zea")
+
+        'Zone 2 Input
+        SendCommands("?zs")
+
+        'Main Mute
         SendCommands("?m")
-        SendCommands("VU")
-        SendCommands("VD")
+
+        'Zone 2 Mute
+        SendCommands("?z2m")
+
+        'Volume Down
+        SendCommands("vd")
+
+        'Volume Up
+        SendCommands("vu")
+
+        'Zone 2 Volume
+        SendCommands("?zv")
+
+        'Main Power
         SendCommands("?p")
+
+        'Zone 2 Power
+        SendCommands("?ap")
+
+        'HDZone Power
+        SendCommands("?zep")
+
+        'Sleep Status
         SendCommands("?sab")
     End Sub
 
     'Connects to VSX if not already.
     Private Function ConnectToVSX(ByVal ip() As Byte, ByVal Port As String)
         If tnSocket.Connected Then Return True
-
-        'Connects to IP:8102
         Try
             ep = New IPEndPoint(New IPAddress(ip), CType(Port.Trim, Integer))
         Catch ex As ArgumentNullException
@@ -149,7 +178,21 @@ Public Class Form1
         End If
     End Sub
 
-    'Properly disconnect and close the socket
+    'Quick sub to parse Zone 2 Volume and remove/add needed amount of zero's.
+    Private Sub ValidateZ2Volume(volume As String)
+        'if value is less than 10 pre-fix 2 "0"s else if less than 100 pre-fix 1 "0" else just send the command without added "0"s
+        If volume >= 81 Then
+            SendCommands("81ZV")
+        ElseIf volume <= 0 Then
+            SendCommands("00ZV")
+        ElseIf volume < 10 Then
+            SendCommands("0" & volume & "ZV")
+        Else
+            SendCommands(volume & "ZV")
+        End If
+    End Sub
+
+    'Properly disconnect and close the socket.
     Private Sub Form1_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
         Try
             tnSocket.Disconnect(False)
@@ -159,18 +202,18 @@ Public Class Form1
         End Try
     End Sub
 
-    'Checks power status and toggles power
+    'Checks power status and toggles power.
     Private Sub btnPwr_Click(sender As Object, e As EventArgs) Handles btnPwr.Click
         preventpowertoggle = False
         SendCommands("?p")
     End Sub
 
-    'Set volume to current volume - 5
+    'Set volume to current volume - 5.
     Private Sub btnMVolumeDown_Click(sender As Object, e As EventArgs) Handles btnMVolumeDown.Click
         ValidateVolume(SliderMVolume.Value - 5)
     End Sub
 
-    'Set volume to current volume + 5
+    'Set volume to current volume + 5.
     Private Sub btnMVolumeUp_Click(sender As Object, e As EventArgs) Handles btnMVolumeUp.Click
         ValidateVolume(SliderMVolume.Value + 5)
     End Sub
@@ -223,7 +266,6 @@ Public Class Form1
     <DllImport("User32.dll")>
     Public Shared Function GetCursorPos(ByRef pt As POINTAPI) As Integer
     End Function
-
     <StructLayout(LayoutKind.Sequential)>
     Public Structure POINTAPI
         Public x As Integer
@@ -295,36 +337,49 @@ Public Class Form1
                     lblMVolume.ForeColor = Color.Lime
                     btnMute.Text = "  MUTE"
                     btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
-                ElseIf decryptedOSD.ToString.Contains("MUTE ") Then
-                    If decryptedOSD.ToString.Contains("MUTE ON") Then
-                        lblMVolume.ForeColor = Color.Red
-                        btnMute.Text = "UN-MUTE"
-                        btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.Muted
-                    ElseIf decryptedOSD.ToString.Contains("MUTE OFF") Then
-                        lblMVolume.ForeColor = Color.Lime
-                        btnMute.Text = "  MUTE"
-                        btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
-                    End If
                 End If
                 lblOSD.Text = decryptedOSD
             End If
 
             'POWER INFORMATION
-            If output.ToString.Contains("PWR0") Then
+            If output.ToString.Substring(0, 4) = "PWR0" Then
                 btnPwr.Text = " ON"
                 btnPwr.SideColor = CustomSideButton._Color.Green
                 If preventpowertoggle = False Then SendCommands("PZ")
                 preventpowertoggle = True
-            End If
-            If output.ToString.Contains("PWR1") Then
+            ElseIf output.ToString.Substring(0, 4) = "PWR1" Then
                 btnPwr.Text = "OFF"
                 btnPwr.SideColor = CustomSideButton._Color.Red
                 If preventpowertoggle = False Then SendCommands("PZ")
                 preventpowertoggle = True
             End If
 
+            If output.ToString.Substring(0, 4) = "ZEP0" Then
+                btnHDZPwr.Text = " HDZONE ON"
+                btnHDZPwr.SideColor = CustomSideButton._Color.Green
+                If preventHDZtoggle = False Then SendCommands("ZEZ")
+                preventHDZtoggle = True
+            ElseIf output.ToString.Substring(0, 4) = "ZEP1" Then
+                btnHDZPwr.Text = "HDZONE OFF"
+                btnHDZPwr.SideColor = CustomSideButton._Color.Red
+                If preventHDZtoggle = False Then SendCommands("ZEZ")
+                preventHDZtoggle = True
+            End If
+
+            If output.ToString.Substring(0, 4) = "APR0" Then
+                btnZ2Pwr.Text = " ZONE 2 ON"
+                btnZ2Pwr.SideColor = CustomSideButton._Color.Green
+                If preventZ2toggle = False Then SendCommands("APZ")
+                preventZ2toggle = True
+            ElseIf output.ToString.Substring(0, 4) = "APR1" Then
+                btnZ2Pwr.Text = "ZONE 2 OFF"
+                btnZ2Pwr.SideColor = CustomSideButton._Color.Red
+                If preventZ2toggle = False Then SendCommands("APZ")
+                preventZ2toggle = True
+            End If
+
             'INPUT INFORMATION (MAIN)
-            If output.ToString.Contains("FN") Then
+            If output.ToString.Substring(0, 2) = "FN" Then
                 Dim TempInput = output.ToString.Remove(0, 2)
                 cmbMainInputs.SelectedValue = Convert.ToInt32(TempInput)
                 btnMainInputPrev.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
@@ -334,8 +389,39 @@ Public Class Form1
                 SendCommands("?RGB" & TempInput)
             End If
 
+            'INPUT INFORMATION (HDZONE)
+            If output.ToString.Substring(0, 3) = "ZEA" Then
+                Dim TempHDZInput = output.ToString.Remove(0, 3)
+                cmbHDZInputs.SelectedValue = Convert.ToInt32(TempHDZInput)
+                btnHDZInputPrev.Text = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
+                btnHDZInputPrev.Tag = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex - 1).value.ToString
+                btnHDZInputNext.Text = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex + 1).key.ToString & " (NEXT)"
+                btnHDZInputNext.Tag = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex + 1).value.ToString
+            End If
+
+            'INPUT INFORMATION (ZONE2)
+            If output.ToString.Substring(0, 3) = "Z2F" Then
+                Dim TempZ2Input = output.ToString.Remove(0, 3)
+                cmbZ2Inputs.SelectedValue = Convert.ToInt32(TempZ2Input)
+                btnZ2InputPrev.Text = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex - 1).key.ToString & "  (PREV)"
+                btnZ2InputPrev.Tag = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex - 1).value.ToString
+                btnZ2InputNext.Text = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex + 1).key.ToString & " (NEXT)"
+                btnZ2InputNext.Tag = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex + 1).value.ToString
+            End If
+
             'VOLUME INFORMATION (MAIN)
-            If output.ToString.Contains("VOL") Then
+            If output.ToString.Substring(0, 2) = "ZV" Then
+                Dim TempVol = output
+                If TempVol.ToString = "ZV00" Then
+                    SliderZ2Volume.Value = 0
+                Else
+                    Dim volume As Integer = TempVol.Replace("ZV", "").TrimStart("0"c)
+                    SliderZ2Volume.Value = volume
+                End If
+            End If
+
+            'VOLUME INFORMATION (ZONE2)
+            If output.ToString.Substring(0, 3) = "VOL" Then
                 Dim TempVol = output
                 If TempVol.ToString = "VOL000" Then
                     SliderMVolume.Value = 0
@@ -343,40 +429,54 @@ Public Class Form1
                     Dim volume As Integer = TempVol.Replace("VOL", "").TrimStart("0"c)
                     SliderMVolume.Value = volume
                 End If
-
             End If
 
             'INPUT NAME INFORMATION
-            If output.ToString.Contains("RGB") Then
+            If output.ToString.Substring(0, 3) = "RGB" Then
                 Dim TempInputName = output
                 lblMainInput.Text = TempInputName.ToString.Remove(0, 6)
                 If dictionary.TryGetValue(TempInputName.ToString.Remove(0, 6), TempInputName.ToString.Substring(3, 2)) = False AndAlso TempInputName.Length < 24 Then
                     dictionary.Add(TempInputName.ToString.Remove(0, 6), TempInputName.ToString.Substring(3, 2))
                     cmbMainInputs.DataSource = New BindingSource(dictionary, Nothing)
+                    cmbHDZInputs.DataSource = New BindingSource(dictionary, Nothing)
+                    cmbZ2Inputs.DataSource = New BindingSource(dictionary, Nothing)
                 End If
             End If
 
-            If output.ToString = "E02" Then
-                lblOSD.Text = "NOT AVAILABLE"
-            End If
-
+            'PARSE ERROR CODES
             If output.ToString = "E04" Then
                 lblOSD.Text = "COMMAND ERROR"
             End If
 
-            If output.ToString = "E06" Then
-                lblOSD.Text = "PARAMETER ERROR"
-            End If
-
+            'PARSE BUSY CODE
             If output.ToString = "B00" Then
                 lblOSD.Text = "DEVICE BUSY"
             End If
 
             'SLEEP INFORMATION
-            If output.ToString.Contains("SAB") Then
-                sleeptimer = output.ToString
+            If output.ToString.Substring(0, 3) = "SAB" Then sleeptimer = output.ToString
+
+            'MUTE INFORMATION (Main)
+            If output.ToString.Substring(0, 4) = "MUT0" Then
+                lblMVolume.ForeColor = Color.Red
+                btnMute.Text = "UN-MUTE"
+                btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.Muted
             End If
-            
+            If output.ToString.Substring(0, 4) = "MUT1" Then
+                lblMVolume.ForeColor = Color.Lime
+                btnMute.Text = "  MUTE"
+                btnMute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
+            End If
+
+            'MUTE INFORMATION (Zone 2)
+            If output.ToString.Substring(0, 6) = "Z2MUT0" Then
+                btnZ2Mute.Text = "UN-MUTE"
+                btnZ2Mute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.Muted
+            End If
+            If output.ToString.Substring(0, 6) = "Z2MUT1" Then
+                btnZ2Mute.Text = "  MUTE"
+                btnZ2Mute.Image = Global.Pioneer_VSX_Series_Remote_Control.My.Resources.Resources.NotMuted
+            End If
         Catch
         End Try
     End Sub
@@ -495,5 +595,43 @@ Public Class Form1
         ElseIf sleeptimer = "SAB090" Then
             SendCommands("000SAB")
         End If
+    End Sub
+
+    'Change HDZone input to the sender.tag's value.
+    Private Sub btnHDZInputCycle_Click(sender As Object, e As EventArgs) Handles btnHDZInputNext.Click, btnHDZInputPrev.Click
+        If Not sender.tag = "" Then SendCommands(sender.tag & "ZEA")
+    End Sub
+
+    'Changes HDZone input to the input selected in cmbHDZInputs combobox.
+    Private Sub cmbHDZInputs_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbHDZInputs.SelectionChangeCommitted
+        SendCommands(cmbHDZInputs.SelectedItem.value & "ZEA")
+    End Sub
+
+    'Checks HDZone power status and toggles power.
+    Private Sub btnHDZPwr_Click(sender As Object, e As EventArgs) Handles btnHDZPwr.Click
+        preventHDZtoggle = False
+        SendCommands("?ZEP")
+    End Sub
+
+    'Sends Z2MZ (Zone 2 Mute Toggle) command.
+    Private Sub btnZ2Mute_Click(sender As Object, e As EventArgs) Handles btnZ2Mute.Click
+        SendCommands("Z2MZ")
+    End Sub
+
+    Private Sub SliderZ2Volume_MouseUp(sender As Object, e As MouseEventArgs) Handles SliderZ2Volume.MouseUp
+        ValidateZ2Volume(SliderZ2Volume.Value)
+    End Sub
+
+    Private Sub btnZ2VolumeDown_Click(sender As Object, e As EventArgs) Handles btnZ2VolumeDown.Click
+        ValidateZ2Volume(SliderZ2Volume.Value - 5)
+    End Sub
+
+    Private Sub btnZ2VolumeUp_Click(sender As Object, e As EventArgs) Handles btnZ2VolumeUp.Click
+        ValidateZ2Volume(SliderZ2Volume.Value + 5)
+    End Sub
+
+    Private Sub btnZ2Pwr_Click(sender As Object, e As EventArgs) Handles btnZ2Pwr.Click
+        preventZ2toggle = False
+        SendCommands("?AP")
     End Sub
 End Class

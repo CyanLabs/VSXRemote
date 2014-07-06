@@ -124,21 +124,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="1403983655_51856.ico" />
+    <None Include="Resources\NotMuted.png" />
     <None Include="Resources\up.png" />
     <None Include="Resources\right.png" />
     <None Include="Resources\left.png" />
     <None Include="Resources\down.png" />
-    <None Include="Resources\arrow-down.png" />
-    <None Include="Resources\arrow-up1.png" />
-    <None Include="Resources\arrow-right.png" />
-    <None Include="Resources\arrow-left.png" />
-    <None Include="Resources\arrow-up.png" />
     <None Include="Resources\Muted.png" />
-    <None Include="Resources\NotMuted2.png" />
-    <None Include="Resources\Muted2.png" />
-    <None Include="Resources\Muted1.png" />
-    <None Include="Resources\NotMuted1.png" />
-    <None Include="Resources\NotMuted.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
