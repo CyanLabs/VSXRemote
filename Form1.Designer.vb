@@ -33,7 +33,7 @@ Partial Class Form1
         Me.CustomTheme1 = New Pioneer_VSX_Series_Remote_Control.CustomTheme()
         Me.tabControls = New Pioneer_VSX_Series_Remote_Control.NSTabControl()
         Me.tabMainZone = New System.Windows.Forms.TabPage()
-        Me.NsComboBox1 = New Pioneer_VSX_Series_Remote_Control.NSComboBox()
+        Me.cmbMainInputs = New Pioneer_VSX_Series_Remote_Control.NSComboBox()
         Me.tabHDZone = New System.Windows.Forms.TabPage()
         Me.tabZone2 = New System.Windows.Forms.TabPage()
         Me.btnZone2 = New Pioneer_VSX_Series_Remote_Control.CustomSideButton()
@@ -128,7 +128,7 @@ Partial Class Form1
         Me.CustomTheme1.Name = "CustomTheme1"
         Me.CustomTheme1.NoRounding = False
         Me.CustomTheme1.Sizable = False
-        Me.CustomTheme1.Size = New System.Drawing.Size(400, 500)
+        Me.CustomTheme1.Size = New System.Drawing.Size(400, 160)
         Me.CustomTheme1.SmartBounds = True
         Me.CustomTheme1.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
         Me.CustomTheme1.TabIndex = 3
@@ -156,7 +156,7 @@ Partial Class Form1
         'tabMainZone
         '
         Me.tabMainZone.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
-        Me.tabMainZone.Controls.Add(Me.NsComboBox1)
+        Me.tabMainZone.Controls.Add(Me.cmbMainInputs)
         Me.tabMainZone.Location = New System.Drawing.Point(5, 4)
         Me.tabMainZone.Name = "tabMainZone"
         Me.tabMainZone.Padding = New System.Windows.Forms.Padding(3)
@@ -164,18 +164,18 @@ Partial Class Form1
         Me.tabMainZone.TabIndex = 0
         Me.tabMainZone.Text = "tabMainZone"
         '
-        'NsComboBox1
+        'cmbMainInputs
         '
-        Me.NsComboBox1.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
-        Me.NsComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
-        Me.NsComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.NsComboBox1.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.NsComboBox1.ForeColor = System.Drawing.Color.White
-        Me.NsComboBox1.FormattingEnabled = True
-        Me.NsComboBox1.Location = New System.Drawing.Point(6, 6)
-        Me.NsComboBox1.Name = "NsComboBox1"
-        Me.NsComboBox1.Size = New System.Drawing.Size(373, 28)
-        Me.NsComboBox1.TabIndex = 0
+        Me.cmbMainInputs.BackColor = System.Drawing.Color.FromArgb(CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer), CType(CType(50, Byte), Integer))
+        Me.cmbMainInputs.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed
+        Me.cmbMainInputs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cmbMainInputs.Font = New System.Drawing.Font("Verdana", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.cmbMainInputs.ForeColor = System.Drawing.Color.White
+        Me.cmbMainInputs.FormattingEnabled = True
+        Me.cmbMainInputs.Location = New System.Drawing.Point(6, 6)
+        Me.cmbMainInputs.Name = "cmbMainInputs"
+        Me.cmbMainInputs.Size = New System.Drawing.Size(373, 28)
+        Me.cmbMainInputs.TabIndex = 0
         '
         'tabHDZone
         '
@@ -291,7 +291,7 @@ Partial Class Form1
         Me.lblOSD.Name = "lblOSD"
         Me.lblOSD.Size = New System.Drawing.Size(397, 43)
         Me.lblOSD.TabIndex = 18
-        Me.lblOSD.Text = "MAIN DISPLAY"
+        Me.lblOSD.Text = "SCANNING INPUTS"
         Me.lblOSD.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.lblOSD.UseCompatibleTextRendering = True
         Me.lblOSD.UseMnemonic = False
@@ -466,7 +466,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(400, 500)
+        Me.ClientSize = New System.Drawing.Size(400, 160)
         Me.Controls.Add(Me.CustomTheme1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -515,6 +515,6 @@ Partial Class Form1
     Friend WithEvents tabMainZone As System.Windows.Forms.TabPage
     Friend WithEvents tabHDZone As System.Windows.Forms.TabPage
     Friend WithEvents tabZone2 As System.Windows.Forms.TabPage
-    Friend WithEvents NsComboBox1 As Pioneer_VSX_Series_Remote_Control.NSComboBox
+    Friend WithEvents cmbMainInputs As Pioneer_VSX_Series_Remote_Control.NSComboBox
 
 End Class

@@ -4,13 +4,15 @@ Imports System.Text
 Imports System.Runtime.InteropServices
 
 Public Class Form1
+
+
     'Various variables.
-    Dim hostIp As IPAddress, serverIp As Byte()
-    Dim ep As IPEndPoint
+    Dim hostIp As IPAddress, serverIp As Byte(), ep As IPEndPoint
     Dim tnSocket As New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
     Dim CheckScreen As New System.Threading.Thread(AddressOf UpdateScreen)
-    Dim autohide As Boolean = True
+    Dim autohide As Boolean = False
     Dim preventpowertoggle As Boolean = True
+    Dim dictionary As New Dictionary(Of String, Integer)
 
     'Args used for ip scanner.
     Private Class ScannerArgs
@@ -21,6 +23,7 @@ Public Class Form1
     'basically builds a ip from the IP bytes then tries to connect to the IP:8102 and if successful assumes it is a pioneer device.
     'TODO - Implement SSDP request instead of this bad method to find the AVR.
     Private Sub ScanIP(ByVal e As ScannerArgs)
+        If Not serverIp Is Nothing Then If Not serverIp.Length = 0 Then Exit Sub
         Dim tmpClient As New TcpClient()
         Try
             Dim bytes As Byte() = e.IPAddress.GetAddressBytes()
@@ -28,17 +31,20 @@ Public Class Form1
 
             Dim newIP As New IPEndPoint(New IPAddress(bytes), 8102)
             tmpClient.Connect(newIP)
-            Threading.Thread.Sleep(50) '50 is the Timeout in ms
+            Threading.Thread.Sleep(350) 'Timeout in ms
             If tmpClient.Connected = True Then
-                NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Connected to " & newIP.ToString & vbNewLine & "click the icon to open the interface", ToolTipIcon.Info)
                 serverIp = bytes
             End If
-            tmpClient.Close()
-        Catch ex As Exception
+        Catch ex As System.Net.Sockets.SocketException
+            'Ignore exception and continue.
+        Finally
             tmpClient.Close()
         End Try
+
     End Sub
     Private Sub Form1_load(sender As Object, e As EventArgs) Handles MyBase.Load
+        CheckForIllegalCrossThreadCalls = False
+
         'Sets Form to bottom right corner, Mkaes invisible and hides from taskbar.
         Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
         Me.Opacity = 0
@@ -46,6 +52,7 @@ Public Class Form1
         Me.ShowInTaskbar = False
 
         'Gets IP Range from network adapter and adds to arguments.ipaddress.
+        'TODO: fix issue with multiple adapters
         hostIp = Dns.GetHostEntry(String.Empty).AddressList.[Single](Function(x) x.AddressFamily = AddressFamily.InterNetwork)
         Dim Arguments As New ScannerArgs
         Arguments.IPAddress = hostIp
@@ -58,29 +65,33 @@ Public Class Form1
             tmpThread.Start(Arguments)
         Next
 
-        'Check PollInfo Sub.
-
-
         lblOSD.Font = CustomFont.GetInstance(lblOSD.Font.Size, FontStyle.Regular)
         lblMainInput.Font = CustomFont.GetInstance(lblMainInput.Font.Size, FontStyle.Regular)
         lblMVolume.Font = CustomFont.GetInstance(lblMVolume.Font.Size, FontStyle.Regular)
-        Me.NsComboBox1.DisplayMember = "Key"
-        Me.NsComboBox1.ValueMember = "Value"
+        cmbMainInputs.DisplayMember = "Key"
+        cmbMainInputs.ValueMember = "Value"
 
-        'Get input names.
-        For i As Integer = 0 To 60
-            If i < 10 Then
-                SendCommands("?RGB0" & i)
-            Else
-                SendCommands("?RGB" & i)
-            End If
-        Next
+        Do While serverIp Is Nothing
+            NotifyIcon1.ShowBalloonTip(5000, "VSX Remote", "Searching for device, Please wait!", ToolTipIcon.Warning)
+        Loop
+        NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Connected to " & New IPAddress(serverIp).ToString, ToolTipIcon.Info)
+        If ConnectToVSX(serverIp, "8102") = True Then
+            'Get input names.
+            For i As Integer = 0 To 60
+                If i < 10 Then
+                    SendCommands("?RGB0" & i)
+                Else
+                    SendCommands("?RGB" & i)
+                End If
+            Next
 
-        PollInfo()
+            PollInfo()
 
-        'Starts OSD thread and injects LCD font.
-        CheckScreen.IsBackground = True
-        CheckScreen.Start()
+            'Starts OSD thread and injects LCD font.
+            CheckScreen.IsBackground = True
+            CheckScreen.Start()
+        End If
+
         If autohide Then Timer1.Start()
     End Sub
 
@@ -91,7 +102,6 @@ Public Class Form1
         SendCommands("VU")
         SendCommands("VD")
         SendCommands("?p")
-
     End Sub
 
     'Connects to VSX if not already.
@@ -118,14 +128,9 @@ Public Class Form1
 
     'Sends "cmd" to VSX.
     Private Function SendCommands(ByVal cmd As String)
-        If ConnectToVSX(serverIp, "8102") = True Then
-            Dim output As String = ""
             Dim SendBytes As [Byte]() = Encoding.ASCII.GetBytes(cmd & vbCrLf)
-            Dim RecvString As String = String.Empty
             Dim NumBytes As Integer = 0
-            Dim RecvBytes(255) As [Byte]
             tnSocket.Send(SendBytes, SendBytes.Length, SocketFlags.None)
-        End If
         Return Nothing
     End Function
 
@@ -172,11 +177,10 @@ Public Class Form1
     End Sub
 
     'Show form and show in taskbar when notification icon clicked or showinterface menu option clicked and update information.
-    Private Sub NotifyIcon1_Click(sender As Object, e As EventArgs) Handles ShowInterface.Click, NotifyIcon1.Click
+    Private Sub ShowInterface_Click(sender As Object, e As EventArgs) Handles ShowInterface.Click
         Me.WindowState = FormWindowState.Normal
         Me.Opacity = 1
         Me.ShowInTaskbar = True
-        PollInfo()
         If autohide Then Timer1.Start()
     End Sub
 
@@ -242,8 +246,6 @@ Public Class Form1
 
     'Background Sub to constantly update the UI with updated information from the screen.
     Private Sub UpdateScreen()
-        CheckForIllegalCrossThreadCalls = False
-        If ConnectToVSX(serverIp, "8102") = True Then
             Dim output As String = ""
             Dim result As String()
             Dim RecvString As String = String.Empty
@@ -263,9 +265,8 @@ Public Class Form1
                 ParseScreen(i)
             Next
             'Repeats sub
-            Threading.Thread.Sleep(1000)
+            Threading.Thread.Sleep(500)
             UpdateScreen()
-        End If
     End Sub
 
     'Converts pioneers FL strings such as "FL022020202053544552454F20202020" to readable text "STEREO".
@@ -327,7 +328,7 @@ Public Class Form1
             'INPUT INFORMATION (MAIN)
             If output.ToString.Contains("FN") Then
                 Dim TempInput = output.ToString.Remove(0, 2)
-                NsComboBox1.SelectedValue = Convert.ToInt32(TempInput)
+                cmbMainInputs.SelectedValue = Convert.ToInt32(TempInput)
                 SendCommands("?RGB" & TempInput)
             End If
 
@@ -349,62 +350,55 @@ Public Class Form1
                 lblMainInput.Text = TempInputName.ToString.Remove(0, 6)
                 If dictionary.TryGetValue(TempInputName.ToString.Remove(0, 6), TempInputName.ToString.Substring(3, 2)) = False AndAlso TempInputName.Length < 24 Then
                     dictionary.Add(TempInputName.ToString.Remove(0, 6), TempInputName.ToString.Substring(3, 2))
-                    NsComboBox1.DataSource = New BindingSource(dictionary, Nothing)
+                    cmbMainInputs.DataSource = New BindingSource(dictionary, Nothing)
                 End If
             End If
             Debug.WriteLine("RESPONSE: " & output.ToString)
         Catch
         End Try
     End Sub
-    Dim dictionary As New Dictionary(Of String, Integer)
+
+    'Set volume of AVR to value of slider on mouse release.
     Private Sub SliderMVolume_MouseUp(sender As Object, e As MouseEventArgs) Handles SliderMVolume.MouseUp
-        'Set volume of AVR to value of slider on mouse release.
         ValidateVolume(SliderMVolume.Value)
     End Sub
 
-    Private Sub btnMainZone_Click(sender As Object, e As EventArgs) Handles btnMainZone.Click
-        tabControls.SelectedIndex = 1
-        If Me.Height = 500 Then
+    'Resizes window, Switches active tab depending on circumstances.
+    Private Sub btnMainZone_Click_1(sender As Object, e As EventArgs) Handles btnZone2.Click, btnMainZone.Click, btnHDZone.Click
+        Dim color = sender.sidecolor
+
+        btnMainZone.SideColor = CustomSideButton._Color.Yellow
+        btnHDZone.SideColor = CustomSideButton._Color.Yellow
+        btnZone2.SideColor = CustomSideButton._Color.Yellow
+
+        If Me.Height = 500 And color = CustomSideButton._Color.Green Then
             Me.Height = 160
             sepAdvanced.Visible = False
-            btnMainZone.SideColor = CustomSideButton._Color.Yellow
-        Else
+        ElseIf color = CustomSideButton._Color.Yellow OrElse Me.Height = 160 Then
             Me.Height = 500
             sepAdvanced.Visible = True
-            btnMainZone.SideColor = CustomSideButton._Color.Green
+            sender.sidecolor = CustomSideButton._Color.Green
         End If
+
+        If sender.name = "btnMainZone" Then tabControls.SelectedIndex = 0
+        If sender.name = "btnHDZone" Then tabControls.SelectedIndex = 1
+        If sender.name = "btnZone2" Then tabControls.SelectedIndex = 2
+
         Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
     End Sub
 
-    Private Sub btnHDZone_Click(sender As Object, e As EventArgs) Handles btnHDZone.Click
-        tabControls.SelectedIndex = 2
-        If Me.Height = 500 Then
-            Me.Height = 160
-            sepAdvanced.Visible = False
-            btnHDZone.SideColor = CustomSideButton._Color.Yellow
-        Else
-            Me.Height = 500
-            sepAdvanced.Visible = True
-            btnHDZone.SideColor = CustomSideButton._Color.Green
-        End If
-        Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
+    'Changes input to the input selected in cmbMainInputs combobox.
+    Private Sub cmbMainInputs_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbMainInputs.SelectionChangeCommitted
+        SendCommands(cmbMainInputs.SelectedItem.value & "FN")
     End Sub
 
-    Private Sub btnZone2_Click(sender As Object, e As EventArgs) Handles btnHDZone.Click
-        tabControls.SelectedIndex = 2
-        If Me.Height = 500 Then
-            Me.Height = 160
-            sepAdvanced.Visible = False
-            btnZone2.SideColor = CustomSideButton._Color.Yellow
-        Else
-            Me.Height = 500
-            sepAdvanced.Visible = True
-            btnZone2.SideColor = CustomSideButton._Color.Green
+    'Left click only, Shows UI.
+    Private Sub NotifyIcon1_MouseClick(sender As Object, e As MouseEventArgs) Handles NotifyIcon1.MouseClick
+        If e.Button = Windows.Forms.MouseButtons.Left Then
+            Me.WindowState = FormWindowState.Normal
+            Me.Opacity = 1
+            Me.ShowInTaskbar = True
+            If autohide Then Timer1.Start()
         End If
-        Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
-    End Sub
-
-    Private Sub NsComboBox1_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles NsComboBox1.SelectionChangeCommitted
-        SendCommands(NsComboBox1.SelectedItem.value & "FN")
     End Sub
 End Class
