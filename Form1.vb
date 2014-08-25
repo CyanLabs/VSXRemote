@@ -208,9 +208,9 @@ Public Class Form1
 
     'Sends "cmd" to VSX.
     Private Function SendCommands(ByVal cmd As String)
-            Dim SendBytes As [Byte]() = Encoding.ASCII.GetBytes(cmd & vbCrLf)
-            Dim NumBytes As Integer = 0
-            tnSocket.Send(SendBytes, SendBytes.Length, SocketFlags.None)
+        Dim SendBytes As [Byte]() = Encoding.ASCII.GetBytes(cmd & vbCrLf)
+        Dim NumBytes As Integer = 0
+        tnSocket.Send(SendBytes, SendBytes.Length, SocketFlags.None)
         Return Nothing
     End Function
 
@@ -339,26 +339,26 @@ Public Class Form1
 
     'Background Sub to constantly update the UI with updated information from the screen.
     Private Sub UpdateScreen()
-            Dim output As String = ""
-            Dim result As String()
-            Dim RecvString As String = String.Empty
-            Dim NumBytes As Integer = 0
-            Dim OSD As String = ""
-            Dim RecvBytes(255) As [Byte]
-            Do
-                NumBytes = tnSocket.Receive(RecvBytes, RecvBytes.Length, 0)
-                RecvString = RecvString + Encoding.ASCII.GetString(RecvBytes, 0, NumBytes)
-                output = output & RecvString
-                result = output.Split(vbCrLf)
-            Loop While NumBytes = 256
+        Dim output As String = ""
+        Dim result As String()
+        Dim RecvString As String = String.Empty
+        Dim NumBytes As Integer = 0
+        Dim OSD As String = ""
+        Dim RecvBytes(255) As [Byte]
+        Do
+            NumBytes = tnSocket.Receive(RecvBytes, RecvBytes.Length, 0)
+            RecvString = RecvString + Encoding.ASCII.GetString(RecvBytes, 0, NumBytes)
+            output = output & RecvString
+            result = output.Split(vbCrLf)
+        Loop While NumBytes = 256
 
-            'loops through all response strings
-            For Each i In result
-                If i = vbCrLf Or i = vbLf Then Continue For
-                ParseScreen(i)
-            Next
-            'Repeats sub
-            UpdateScreen()
+        'loops through all response strings
+        For Each i In result
+            If i = vbCrLf Or i = vbLf Then Continue For
+            ParseScreen(i)
+        Next
+        'Repeats sub
+        UpdateScreen()
     End Sub
 
     'Converts pioneers FL strings such as "FL022020202053544552454F20202020" to readable text "STEREO".
