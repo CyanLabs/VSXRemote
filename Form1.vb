@@ -2,17 +2,17 @@
 Imports System.Net
 Imports System.Text
 Imports System.Runtime.InteropServices
-Imports System.Text.RegularExpressions
 
 Public Class Form1
 
     'Various variables.
-    Dim ep As IPEndPoint, autohide As Boolean = False
+    Dim hostIp As IPAddress, serverIp As Byte(), ep As IPEndPoint
     Dim tnSocket As New Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
     Dim CheckScreen As New System.Threading.Thread(AddressOf UpdateScreen)
+    Dim autohide As Boolean = False
     Dim preventpowertoggle As Boolean = True, preventHDZtoggle As Boolean = True, preventZ2toggle As Boolean = True
-    Dim dictionary As New Dictionary(Of String, Integer), sleeptimer As String = ""
-    Dim SSDPResult As String = ""
+    Dim dictionary As New Dictionary(Of String, Integer)
+    Dim sleeptimer As String = ""
 
     'Args used for ip scanner.
     Private Class ScannerArgs
@@ -20,35 +20,53 @@ Public Class Form1
         Public IntArg As Integer
     End Class
 
-    ' ''Sound Modes, Long List
-    Dim soundmodes(,) As String
-    'MAKE A DICTIONARY THINGY MABOB
-    ''= {"STEREO (cyclic)", "STANDARD", "STEREO (direct set)", "(2ch source)", "PRO LOGIC2 MOVIE",
-    '"PRO LOGIC2x MOVIE", "PRO LOGIC2 MUSIC", "PRO LOGIC2x MUSIC", "PRO LOGIC2 GAME", "PRO LOGIC2x GAME", "PRO LOGIC2z HEIGHT",
-    '"WIDE SURROUND MOVIE", "WIDE SURROUND MUSIC", "PRO LOGIC", "Neo:6 CINEMA", "Neo:6 MUSIC", "XM HD SURROUND", "NEURAL SURROUND",
-    '"Neo:X CINEMA", "Neo:X MUSIC", "Neo:X GAME", "NEURAL SURROUND+Neo:X CINEMA", "NEURAL SURROUND+Neo:X MUSIC",
-    '"NEURAL SURROUND+Neo:X GAME", "(Multi ch source)", "(Multi ch source)+DOLBY EX", "(Multi ch source)+PRO LOGIC2x MOVIE",
-    '"(Multi ch source)+PRO LOGIC2x MUSIC", "(Multi-ch Source)+PRO LOGIC2z HEIGHT", "(Multi-ch Source)+WIDE SURROUND MOVIE",
-    '"(Multi-ch Source)+WIDE SURROUND MUSIC", "(Multi ch source)DTS-ES Neo:6", "(Multi ch source)DTS-ES matrix",
-    '"(Multi ch source)DTS-ES discrete", "(Multi ch source)DTS-ES 8ch discrete", "(Multi ch source)DTS-ES Neo:X",
-    '"ADVANCED SURROUND (cyclic)", "ACTION", "DRAMA", "SCI-FI", "MONO FILM", "ENTERTAINMENT SHOW", "EXPANDED THEATER", "TV SURROUND",
-    '"ADVANCED GAME", "SPORTS", "CLASSICAL", "ROCK/POP", "UNPLUGGED", "EXTENDED STEREO", "Front Stage Surround Advance Focus", "Front Stage Surround Advance Wide",
-    ' "RETRIEVER AIR", "PHONES SURROUND", "THX (cyclic)", "PROLOGIC + THX CINEMA", "PL2 MOVIE + THX CINEMA", "Neo:6 CINEMA + THX CINEMA",
-    '"PL2x MOVIE + THX CINEMA", "PL2z HEIGHT + THX CINEMA", "THX SELECT2 GAMES", "THX CINEMA (for 2ch)", "THX MUSIC (for 2ch)",
-    '"THX GAMES (for 2ch)", "PL2 MUSIC + THX MUSIC", "PL2x MUSIC + THX MUSIC", "PL2z HEIGHT + THX MUSIC", "Neo:6 MUSIC + THX MUSIC",
-    '"PL2 GAME + THX GAMES", "PL2x GAME + THX GAMES", "PL2z HEIGHT + THX GAMES", "THX ULTRA2 GAMES", "PROLOGIC + THX MUSIC", "PROLOGIC + THX GAMES",
-    '"Neo:X CINEMA + THX CINEMA", "Neo:X MUSIC + THX MUSIC", "Neo:X GAME + THX GAMES", "THX CINEMA (for multi ch)", "THX SURROUND EX (for multi ch)",
-    '"PL2x MOVIE + THX CINEMA (for multi ch)", "PL2z HEIGHT + THX CINEMA (for multi ch)", "ES Neo:6 + THX CINEMA (for multi ch)", "ES MATRIX + THX CINEMA (for multi ch)",
-    '"ES DISCRETE + THX CINEMA (for multi ch)", "ES 8ch DISCRETE + THX CINEMA (for multi ch)", "THX SELECT2 CINEMA (for multi ch)", "THX SELECT2 MUSIC (for multi ch)",
-    '"THX SELECT2 GAMES (for multi ch)", "THX ULTRA2 CINEMA (for multi ch)", "THX ULTRA2 MUSIC (for multi ch)", "THX ULTRA2 GAMES (for multi ch)", "THX MUSIC (for multi ch)",
-    '"THX GAMES (for multi ch)", "PL2x MUSIC + THX MUSIC (for multi ch)", "PL2z HEIGHT + THX MUSIC (for multi ch)", "EX + THX GAMES (for multi ch)",
-    '"PL2z HEIGHT + THX GAMES (for multi ch)", "Neo:6 + THX MUSIC (for multi ch)", "Neo:6 + THX GAMES (for multi ch)", "ES MATRIX + THX MUSIC (for multi ch)",
-    '"ES MATRIX + THX GAMES (for multi ch)", "ES DISCRETE + THX MUSIC (for multi ch)", "ES DISCRETE + THX GAMES (for multi ch)", "ES 8CH DISCRETE + THX MUSIC (for multi ch)",
-    '"ES 8CH DISCRETE + THX GAMES (for multi ch)", "Neo:X + THX CINEMA (for multi ch)", "Neo:X + THX MUSIC (for multi ch)", "Neo:X + THX GAMES (for multi ch)",
-    '"AUTO SURR/STREAM DIRECT (cyclic)", "AUTO SURROUND", "Auto Level Control (A.L.C.)", "DIRECT", "PURE DIRECT", "OPTIMUM SURROUND"}
+    'Sound Modes, Long List
+    Dim soundmodes() As String = {"STEREO (cyclic)", "STANDARD", "STEREO (direct set)", "(2ch source)", "PRO LOGIC2 MOVIE",
+    "PRO LOGIC2x MOVIE", "PRO LOGIC2 MUSIC", "PRO LOGIC2x MUSIC", "PRO LOGIC2 GAME", "PRO LOGIC2x GAME", "PRO LOGIC2z HEIGHT",
+    "WIDE SURROUND MOVIE", "WIDE SURROUND MUSIC", "PRO LOGIC", "Neo:6 CINEMA", "Neo:6 MUSIC", "XM HD SURROUND", "NEURAL SURROUND",
+    "Neo:X CINEMA", "Neo:X MUSIC", "Neo:X GAME", "NEURAL SURROUND+Neo:X CINEMA", "NEURAL SURROUND+Neo:X MUSIC",
+    "NEURAL SURROUND+Neo:X GAME", "(Multi ch source)", "(Multi ch source)+DOLBY EX", "(Multi ch source)+PRO LOGIC2x MOVIE",
+    "(Multi ch source)+PRO LOGIC2x MUSIC", "(Multi-ch Source)+PRO LOGIC2z HEIGHT", "(Multi-ch Source)+WIDE SURROUND MOVIE",
+    "(Multi-ch Source)+WIDE SURROUND MUSIC", "(Multi ch source)DTS-ES Neo:6", "(Multi ch source)DTS-ES matrix",
+    "(Multi ch source)DTS-ES discrete", "(Multi ch source)DTS-ES 8ch discrete", "(Multi ch source)DTS-ES Neo:X",
+    "ADVANCED SURROUND (cyclic)", "ACTION", "DRAMA", "SCI-FI", "MONO FILM", "ENTERTAINMENT SHOW", "EXPANDED THEATER", "TV SURROUND",
+    "ADVANCED GAME", "SPORTS", "CLASSICAL", "ROCK/POP", "UNPLUGGED", "EXTENDED STEREO", "Front Stage Surround Advance Focus", "Front Stage Surround Advance Wide",
+     "RETRIEVER AIR", "PHONES SURROUND", "THX (cyclic)", "PROLOGIC + THX CINEMA", "PL2 MOVIE + THX CINEMA", "Neo:6 CINEMA + THX CINEMA",
+    "PL2x MOVIE + THX CINEMA", "PL2z HEIGHT + THX CINEMA", "THX SELECT2 GAMES", "THX CINEMA (for 2ch)", "THX MUSIC (for 2ch)",
+    "THX GAMES (for 2ch)", "PL2 MUSIC + THX MUSIC", "PL2x MUSIC + THX MUSIC", "PL2z HEIGHT + THX MUSIC", "Neo:6 MUSIC + THX MUSIC",
+    "PL2 GAME + THX GAMES", "PL2x GAME + THX GAMES", "PL2z HEIGHT + THX GAMES", "THX ULTRA2 GAMES", "PROLOGIC + THX MUSIC", "PROLOGIC + THX GAMES",
+    "Neo:X CINEMA + THX CINEMA", "Neo:X MUSIC + THX MUSIC", "Neo:X GAME + THX GAMES", "THX CINEMA (for multi ch)", "THX SURROUND EX (for multi ch)",
+    "PL2x MOVIE + THX CINEMA (for multi ch)", "PL2z HEIGHT + THX CINEMA (for multi ch)", "ES Neo:6 + THX CINEMA (for multi ch)", "ES MATRIX + THX CINEMA (for multi ch)",
+    "ES DISCRETE + THX CINEMA (for multi ch)", "ES 8ch DISCRETE + THX CINEMA (for multi ch)", "THX SELECT2 CINEMA (for multi ch)", "THX SELECT2 MUSIC (for multi ch)",
+    "THX SELECT2 GAMES (for multi ch)", "THX ULTRA2 CINEMA (for multi ch)", "THX ULTRA2 MUSIC (for multi ch)", "THX ULTRA2 GAMES (for multi ch)", "THX MUSIC (for multi ch)",
+    "THX GAMES (for multi ch)", "PL2x MUSIC + THX MUSIC (for multi ch)", "PL2z HEIGHT + THX MUSIC (for multi ch)", "EX + THX GAMES (for multi ch)",
+    "PL2z HEIGHT + THX GAMES (for multi ch)", "Neo:6 + THX MUSIC (for multi ch)", "Neo:6 + THX GAMES (for multi ch)", "ES MATRIX + THX MUSIC (for multi ch)",
+    "ES MATRIX + THX GAMES (for multi ch)", "ES DISCRETE + THX MUSIC (for multi ch)", "ES DISCRETE + THX GAMES (for multi ch)", "ES 8CH DISCRETE + THX MUSIC (for multi ch)",
+    "ES 8CH DISCRETE + THX GAMES (for multi ch)", "Neo:X + THX CINEMA (for multi ch)", "Neo:X + THX MUSIC (for multi ch)", "Neo:X + THX GAMES (for multi ch)",
+    "AUTO SURR/STREAM DIRECT (cyclic)", "AUTO SURROUND", "Auto Level Control (A.L.C.)", "DIRECT", "PURE DIRECT", "OPTIMUM SURROUND"}
 
+    'basically builds a ip from the IP bytes then tries to connect to the IP:8102 and if successful assumes it is a pioneer device.
+    'TODO - Implement SSDP request instead of this bad method to find the AVR.
+    Private Sub ScanIP(ByVal e As ScannerArgs)
+        If Not serverIp Is Nothing Then If Not serverIp.Length = 0 Then Exit Sub
+        Dim tmpClient As New TcpClient()
+        Try
+            Dim bytes As Byte() = e.IPAddress.GetAddressBytes()
+            bytes(3) = e.IntArg
+
+            Dim newIP As New IPEndPoint(New IPAddress(bytes), 8102)
+            tmpClient.Connect(newIP)
+            Threading.Thread.Sleep(350) 'Timeout in ms
+            If tmpClient.Connected = True Then
+                serverIp = bytes
+            End If
+        Catch ex As System.Net.Sockets.SocketException
+            'Ignore exception and continue.
+        Finally
+            tmpClient.Close()
+        End Try
+    End Sub
     Private Sub Form1_load(sender As Object, e As EventArgs) Handles MyBase.Load
-
         CheckForIllegalCrossThreadCalls = False
 
         'Sets Form to bottom right corner, Mkaes invisible and hides from taskbar.
@@ -57,21 +75,19 @@ Public Class Form1
         Me.WindowState = FormWindowState.Minimized
         Me.ShowInTaskbar = False
 
-        If SSDPBroadcast("urn:schemas-upnp-org:service:AVTransport:1", "1", 9652) = "OK" Then
-            SSDPResult = UDPListener(3, 9652)
-        Else
-            NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Could not connect to device, Manual configuration coming soon.", ToolTipIcon.Error)
-            Threading.Thread.Sleep(3000)
-            Application.Exit()
-        End If
+        'Gets IP Range from network adapter and adds to arguments.ipaddress.
+        'TODO: fix issue with multiple adapters
+        hostIp = Dns.GetHostEntry(String.Empty).AddressList.[Single](Function(x) x.AddressFamily = AddressFamily.InterNetwork)
+        Dim Arguments As New ScannerArgs
+        Arguments.IPAddress = hostIp
 
-        If IPAddress.TryParse(SSDPResult, Nothing) Then
-            NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Connected to " & SSDPResult, ToolTipIcon.Info)
-        Else
-            NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Could not connect to device, Manual configuration coming soon.", ToolTipIcon.Error)
-            Threading.Thread.Sleep(3000)
-            Application.Exit()
-        End If
+        'Creates 254 threads to scan 254 IP's extremely quickly.
+        For i As Integer = 0 To 254
+            Arguments.IntArg = i
+            Dim tmpThread As New System.Threading.Thread(AddressOf ScanIP)
+            tmpThread.IsBackground = True
+            tmpThread.Start(Arguments)
+        Next
 
         lblOSD.Font = CustomFont.GetInstance(lblOSD.Font.Size, FontStyle.Regular)
         lblMainInput.Font = CustomFont.GetInstance(lblMainInput.Font.Size, FontStyle.Regular)
@@ -86,10 +102,13 @@ Public Class Form1
         cmbSoundModes.DisplayMember = "Key"
         cmbSoundModes.ValueMember = "Value"
 
-        'cmbSoundModes.Items.AddRange(soundmodes)
+        cmbSoundModes.Items.AddRange(soundmodes)
 
-        If ConnectToVSX(SSDPResult, "8102") = True Then
-
+        Do While serverIp Is Nothing
+            Threading.Thread.Sleep(1000)
+        Loop
+        NotifyIcon1.ShowBalloonTip(3000, "VSX Remote", "Connected to " & New IPAddress(serverIp).ToString, ToolTipIcon.Info)
+        If ConnectToVSX(serverIp, "8102") = True Then
             'Get input names.
             For i As Integer = 0 To 60
                 If i < 10 Then
@@ -134,6 +153,8 @@ Public Class Form1
         'Phase Control
         SendCommands("?is")
 
+        Threading.Thread.Sleep(1000)
+
         'VHT
         SendCommands("?vht")
 
@@ -169,10 +190,15 @@ Public Class Form1
     End Sub
 
     'Connects to VSX if not already.
-    Private Function ConnectToVSX(ByVal ip As String, ByVal Port As String)
+    Private Function ConnectToVSX(ByVal ip() As Byte, ByVal Port As String)
         If tnSocket.Connected Then Return True
         Try
-            tnSocket.Connect(IPAddress.Parse(ip), Port)
+            ep = New IPEndPoint(New IPAddress(ip), CType(Port.Trim, Integer))
+        Catch ex As ArgumentNullException
+            'do stuff...
+        End Try
+        Try
+            tnSocket.Connect(ep)
             If tnSocket.Connected Then Return True
         Catch oEX As Exception
             Return False
@@ -182,9 +208,9 @@ Public Class Form1
 
     'Sends "cmd" to VSX.
     Private Function SendCommands(ByVal cmd As String)
-        Dim SendBytes As [Byte]() = Encoding.ASCII.GetBytes(cmd & vbCrLf)
-        Dim NumBytes As Integer = 0
-        tnSocket.Send(SendBytes, SendBytes.Length, SocketFlags.None)
+            Dim SendBytes As [Byte]() = Encoding.ASCII.GetBytes(cmd & vbCrLf)
+            Dim NumBytes As Integer = 0
+            tnSocket.Send(SendBytes, SendBytes.Length, SocketFlags.None)
         Return Nothing
     End Function
 
@@ -217,55 +243,6 @@ Public Class Form1
             SendCommands(volume & "ZV")
         End If
     End Sub
-
-    'Code to send a SSDP broadcast to easily get IP of VSX (only 1 device supported for now atleast)
-    Public Function SSDPBroadcast(ByVal strSearchST As String, ByVal MXTime As String, ByVal Port As Integer) As String
-        Dim myOutUDPClient As UdpClient = Nothing
-        Try
-            myOutUDPClient = New UdpClient(Port)
-            Dim sendBytes As [Byte]() = System.Text.Encoding.ASCII.GetBytes("M-SEARCH * HTTP/1.1" & vbCrLf & _
-                                                                "HOST: 239.255.255.250:1900" & vbCrLf & _
-                                                                "ST: " & strSearchST & vbCrLf & _
-                                                                "MAN: " & Chr(34) & "ssdp:discover" & Chr(34) & vbCrLf & _
-                                                                "MX: " & MXTime & vbCrLf & vbCrLf)
-            myOutUDPClient.Connect("239.255.255.250", 1900)
-            myOutUDPClient.Send(sendBytes, sendBytes.Length)
-            If myOutUDPClient IsNot Nothing Then myOutUDPClient.Close()
-            Return "OK"
-        Catch ex As Exception
-            If myOutUDPClient IsNot Nothing Then myOutUDPClient.Close()
-            MessageBox.Show(ex.Message)
-            Return ex.Message
-        End Try
-    End Function
-
-    'Listens for SSDP response.
-    Public Function UDPListener(ByVal DiscoTime As Integer, ByVal Port As Integer)
-        Dim RemoteIpEndPoint As IPEndPoint = Nothing
-        Dim myInUDPClient As UdpClient = Nothing
-        Dim retData As StringBuilder = New StringBuilder
-        Try
-            RemoteIpEndPoint = New IPEndPoint(IPAddress.Any, Port)
-            myInUDPClient = New UdpClient(RemoteIpEndPoint)
-            Threading.Thread.Sleep(DiscoTime * 1000)
-            Do Until myInUDPClient.Available = 0
-                Dim bte() As Byte = myInUDPClient.Receive(RemoteIpEndPoint)
-                retData.Append(System.Text.Encoding.ASCII.GetString(bte))
-            Loop
-            If myInUDPClient IsNot Nothing Then myInUDPClient.Close()
-
-            'use remoteipendpoint instead of this loopy thing :)
-            For Each line In retData.ToString.Split(vbCrLf)
-                If line.Contains("LOCATION:") Then Return Regex.Match(line, "(?:(?:[0-9]{1,3}.){3}[0-9]{1,3})").ToString
-            Next
-            Return "ERROR"
-        Catch ex As Exception
-            If myInUDPClient IsNot Nothing Then myInUDPClient.Close()
-            MessageBox.Show(ex.Message)
-            Return ex.Message
-        End Try
-        If myInUDPClient IsNot Nothing Then myInUDPClient.Close()
-    End Function
 
     'Properly disconnect and close the socket.
     Private Sub Form1_FormClosed(sender As Object, e As FormClosedEventArgs) Handles MyBase.FormClosed
@@ -362,26 +339,26 @@ Public Class Form1
 
     'Background Sub to constantly update the UI with updated information from the screen.
     Private Sub UpdateScreen()
-        Dim output As String = ""
-        Dim result As String()
-        Dim RecvString As String = String.Empty
-        Dim NumBytes As Integer = 0
-        Dim OSD As String = ""
-        Dim RecvBytes(255) As [Byte]
-        Do
-            NumBytes = tnSocket.Receive(RecvBytes, RecvBytes.Length, 0)
-            RecvString = RecvString + Encoding.ASCII.GetString(RecvBytes, 0, NumBytes)
-            output = output & RecvString
-            result = output.Split(vbCrLf)
-        Loop While NumBytes = 256
+            Dim output As String = ""
+            Dim result As String()
+            Dim RecvString As String = String.Empty
+            Dim NumBytes As Integer = 0
+            Dim OSD As String = ""
+            Dim RecvBytes(255) As [Byte]
+            Do
+                NumBytes = tnSocket.Receive(RecvBytes, RecvBytes.Length, 0)
+                RecvString = RecvString + Encoding.ASCII.GetString(RecvBytes, 0, NumBytes)
+                output = output & RecvString
+                result = output.Split(vbCrLf)
+            Loop While NumBytes = 256
 
-        'loops through all response strings
-        For Each i In result
-            If i = vbCrLf Or i = vbLf Then Continue For
-            ParseScreen(i)
-        Next
-        'Repeats sub
-        UpdateScreen()
+            'loops through all response strings
+            For Each i In result
+                If i = vbCrLf Or i = vbLf Then Continue For
+                ParseScreen(i)
+            Next
+            'Repeats sub
+            UpdateScreen()
     End Sub
 
     'Converts pioneers FL strings such as "FL022020202053544552454F20202020" to readable text "STEREO".
