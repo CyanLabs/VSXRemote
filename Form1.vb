@@ -69,6 +69,12 @@ Public Class Form1
     Private Sub Form1_load(sender As Object, e As EventArgs) Handles MyBase.Load
         CheckForIllegalCrossThreadCalls = False
 
+        'If Environment.GetCommandLineArgs.Length > 1 Then
+        '    For Each x As String In Environment.GetCommandLineArgs
+        '        If x = "-command=" Then
+        '    Next
+        'End If
+
         'Sets Form to bottom right corner, Mkaes invisible and hides from taskbar.
         Me.Location = New System.Drawing.Point(Screen.PrimaryScreen.WorkingArea.Width - Me.Width, Screen.PrimaryScreen.WorkingArea.Height - Me.Height)
         Me.Opacity = 0
@@ -129,11 +135,23 @@ Public Class Form1
     End Sub
 
     Private Sub PollInfo()
+
+        'Main input
+        SendCommands("?f")
+
+        'HDZone input
+        SendCommands("?zea")
+
+        'Zone 2 Input
+        SendCommands("?zs")
+
         'Zone 2 Volume
         SendCommands("?zv")
 
         'Main Power
         SendCommands("?p")
+
+        Threading.Thread.Sleep(1000)
 
         'Zone 2 Power
         SendCommands("?ap")
@@ -166,15 +184,6 @@ Public Class Form1
 
         'EQ
         SendCommands("?atc")
-
-        'Main input
-        SendCommands("?f")
-
-        'HDZone input
-        SendCommands("?zea")
-
-        'Zone 2 Input
-        SendCommands("?zs")
 
         'Main Mute
         SendCommands("?m")
@@ -381,6 +390,43 @@ Public Class Form1
         Try
             output = output.Replace(vbLf, "").Replace(vbCrLf, "")
 
+            'INPUT INFORMATION (MAIN)
+            If output.ToString.Substring(0, 2) = "FN" Then
+                Dim TempInput = output.ToString.Remove(0, 2)
+                cmbMainInputs.SelectedValue = Convert.ToInt32(TempInput)
+                btnMainInputPrev.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
+                btnMainInputPrev.Tag = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).value.ToString
+                btnMainInputNext.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex + 1).key.ToString & " (NEXT)"
+                btnMainInputNext.Tag = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex + 1).value.ToString
+                SendCommands("?RGB" & TempInput)
+            End If
+
+            'INPUT INFORMATION (HDZONE)
+            If output.ToString.Substring(0, 3) = "ZEA" Then
+                Dim TempHDZInput = output.ToString.Remove(0, 3)
+                cmbHDZInputs.SelectedValue = Convert.ToInt32(TempHDZInput)
+                btnHDZInputPrev.Text = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
+                btnHDZInputPrev.Tag = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex - 1).value.ToString
+                btnHDZInputNext.Text = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex + 1).key.ToString & " (NEXT)"
+                btnHDZInputNext.Tag = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex + 1).value.ToString
+            End If
+
+            'INPUT INFORMATION (ZONE2)
+            If output.ToString.Substring(0, 3) = "Z2F" Then
+                Dim TempZ2Input = output.ToString.Remove(0, 3)
+                cmbZ2Inputs.SelectedValue = Convert.ToInt32(TempZ2Input)
+                btnZ2InputPrev.Text = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex - 1).key.ToString & "  (PREV)"
+                btnZ2InputPrev.Tag = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex - 1).value.ToString
+                btnZ2InputNext.Text = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex + 1).key.ToString & " (NEXT)"
+                btnZ2InputNext.Tag = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex + 1).value.ToString
+            End If
+
+            If output.ToString.Substring(0, 3) = "HA1" Then
+                btnSoundPassthrough.SideColor = CustomSideButton._Color.Green
+            ElseIf output.ToString.Substring(0, 3) = "HA0" Then
+                btnSoundPassthrough.SideColor = CustomSideButton._Color.Red
+            End If
+
             If output.ToString.Substring(0, 3) = "IS1" Then
                 btnSoundPhaseControl.SideColor = CustomSideButton._Color.Green
             ElseIf output.ToString.Substring(0, 3) = "IS0" Then
@@ -409,12 +455,6 @@ Public Class Form1
                 btnSoundEQ.SideColor = CustomSideButton._Color.Green
             ElseIf output.ToString.Substring(0, 4) = "ATC0" Then
                 btnSoundEQ.SideColor = CustomSideButton._Color.Red
-            End If
-
-            If output.ToString.Substring(0, 3) = "HA1" Then
-                btnSoundPassthrough.SideColor = CustomSideButton._Color.Green
-            ElseIf output.ToString.Substring(0, 3) = "HA0" Then
-                btnSoundPassthrough.SideColor = CustomSideButton._Color.Red
             End If
 
             'SCREEN INFORMATION
@@ -465,37 +505,6 @@ Public Class Form1
                 btnZ2Pwr.SideColor = CustomSideButton._Color.Red
                 If preventZ2toggle = False Then SendCommands("APZ")
                 preventZ2toggle = True
-            End If
-
-            'INPUT INFORMATION (MAIN)
-            If output.ToString.Substring(0, 2) = "FN" Then
-                Dim TempInput = output.ToString.Remove(0, 2)
-                cmbMainInputs.SelectedValue = Convert.ToInt32(TempInput)
-                btnMainInputPrev.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
-                btnMainInputPrev.Tag = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex - 1).value.ToString
-                btnMainInputNext.Text = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex + 1).key.ToString & " (NEXT)"
-                btnMainInputNext.Tag = cmbMainInputs.Items.Item(cmbMainInputs.SelectedIndex + 1).value.ToString
-                SendCommands("?RGB" & TempInput)
-            End If
-
-            'INPUT INFORMATION (HDZONE)
-            If output.ToString.Substring(0, 3) = "ZEA" Then
-                Dim TempHDZInput = output.ToString.Remove(0, 3)
-                cmbHDZInputs.SelectedValue = Convert.ToInt32(TempHDZInput)
-                btnHDZInputPrev.Text = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex - 1).key.ToString & "  (PREV)"
-                btnHDZInputPrev.Tag = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex - 1).value.ToString
-                btnHDZInputNext.Text = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex + 1).key.ToString & " (NEXT)"
-                btnHDZInputNext.Tag = cmbHDZInputs.Items.Item(cmbHDZInputs.SelectedIndex + 1).value.ToString
-            End If
-
-            'INPUT INFORMATION (ZONE2)
-            If output.ToString.Substring(0, 3) = "Z2F" Then
-                Dim TempZ2Input = output.ToString.Remove(0, 3)
-                cmbZ2Inputs.SelectedValue = Convert.ToInt32(TempZ2Input)
-                btnZ2InputPrev.Text = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex - 1).key.ToString & "  (PREV)"
-                btnZ2InputPrev.Tag = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex - 1).value.ToString
-                btnZ2InputNext.Text = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex + 1).key.ToString & " (NEXT)"
-                btnZ2InputNext.Tag = cmbZ2Inputs.Items.Item(cmbZ2Inputs.SelectedIndex + 1).value.ToString
             End If
 
             'VOLUME INFORMATION (MAIN)
@@ -729,51 +738,27 @@ Public Class Form1
     End Sub
 
     Private Sub btnSoundPhaseControl_Click(sender As Object, e As EventArgs) Handles btnSoundPhaseControl.Click
-        If sender.sidecolor = CustomSideButton._Color.Green Then
-            SendCommands("0IS")
-        Else
-            SendCommands("1IS")
-        End If
+            SendCommands("9IS")
     End Sub
 
     Private Sub btnSoundVirtualHeight_Click(sender As Object, e As EventArgs) Handles btnSoundVirtualHeight.Click
-        If sender.sidecolor = CustomSideButton._Color.Green Then
-            SendCommands("0VHT")
-        Else
-            SendCommands("1VHT")
-        End If
+            SendCommands("9VHT")
     End Sub
 
     Private Sub btnSoundVirtualSB_Click(sender As Object, e As EventArgs) Handles btnSoundVirtualSB.Click
-        If sender.sidecolor = CustomSideButton._Color.Green Then
-            SendCommands("0VSB")
-        Else
-            SendCommands("1VSB")
-        End If
+            SendCommands("9VSB")
     End Sub
 
     Private Sub btnSoundPQLS_Click(sender As Object, e As EventArgs) Handles btnSoundPQLS.Click
-        If sender.sidecolor = CustomSideButton._Color.Green Then
-            SendCommands("0PQ")
-        Else
-            SendCommands("1PQ")
-        End If
+            SendCommands("9PQ")
     End Sub
 
     Private Sub btnEQToggle_Click(sender As Object, e As EventArgs) Handles btnSoundEQ.Click
-        If sender.sidecolor = CustomSideButton._Color.Green Then
-            SendCommands("0ATC")
-        Else
-            SendCommands("1ATC")
-        End If
+        SendCommands("9ATC")
     End Sub
 
     Private Sub btnSoundOutputToggle_Click(sender As Object, e As EventArgs) Handles btnSoundPassthrough.Click
-        If sender.sidecolor = CustomSideButton._Color.Green Then
-            SendCommands("0HA")
-        Else
-            SendCommands("1HA")
-        End If
+        SendCommands("9HA")
     End Sub
 
     Private Sub cmbMCACC_SelectionChangeCommitted(sender As Object, e As EventArgs) Handles cmbMCACC.SelectionChangeCommitted

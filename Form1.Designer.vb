@@ -197,7 +197,7 @@ Partial Class Form1
         Me.CustomTheme1.Name = "CustomTheme1"
         Me.CustomTheme1.NoRounding = False
         Me.CustomTheme1.Sizable = False
-        Me.CustomTheme1.Size = New System.Drawing.Size(400, 400)
+        Me.CustomTheme1.Size = New System.Drawing.Size(400, 200)
         Me.CustomTheme1.SmartBounds = True
         Me.CustomTheme1.StartPosition = System.Windows.Forms.FormStartPosition.WindowsDefaultBounds
         Me.CustomTheme1.TabIndex = 3
@@ -220,7 +220,6 @@ Partial Class Form1
         Me.btnPlayback.TabIndex = 27
         Me.btnPlayback.Text = " PLAYBACK"
         Me.btnPlayback.Transparent = True
-        Me.btnPlayback.Visible = False
         '
         'btnNavigation
         '
@@ -919,6 +918,7 @@ Partial Class Form1
         Me.Label2.Size = New System.Drawing.Size(113, 16)
         Me.Label2.TabIndex = 2
         Me.Label2.Text = "Surround Mode:"
+        Me.Label2.Visible = False
         '
         'Label1
         '
@@ -956,6 +956,7 @@ Partial Class Form1
         Me.cmbSoundModes.Name = "cmbSoundModes"
         Me.cmbSoundModes.Size = New System.Drawing.Size(246, 28)
         Me.cmbSoundModes.TabIndex = 1
+        Me.cmbSoundModes.Visible = False
         '
         'tabNavigation
         '
@@ -1378,7 +1379,7 @@ Partial Class Form1
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(400, 400)
+        Me.ClientSize = New System.Drawing.Size(400, 200)
         Me.Controls.Add(Me.CustomTheme1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
